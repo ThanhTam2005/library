@@ -1,0 +1,137 @@
+<div class="home-page">
+
+    <!-- Thanh công cụ trên cùng -->
+    <header class="navbar">
+
+        <div class="navbar-left">
+            <div class="logo">Document Storage</div>
+
+            <nav class="menu">
+                <a routerLink="/home">Trang chủ</a>
+
+                <div class="dropdown">
+                    <button class="drop-btn" type="button" (click)="toggleStorageMenu()">
+                        Kho lưu trữ ▾
+                    </button>
+
+                    <div class="dropdown-menu" [class.show]="showStorageMenu">
+                        <a>Tài liệu của tôi</a>
+                        <a>Được chia sẻ với tôi</a>
+                        <a>Gần đây</a>
+                        <a>Yêu thích</a>
+                        <a>Thùng rác</a>
+                    </div>
+                </div>
+
+                <a routerLink="/upload">Upload</a>
+            </nav>
+        </div>
+
+        <!-- Thanh tìm kiếm phía trên -->
+        <div class="top-search">
+            <input type="text" placeholder="Tìm kiếm tài liệu...">
+        </div>
+
+        <!-- Tài khoản cá nhân -->
+        <div class="profile-dropdown">
+            <button class="profile-btn" type="button" (click)="toggleProfileMenu()">
+                <span class="hamburger-icon">☰</span>
+                <span>Tài khoản cá nhân</span>
+                <span>▾</span>
+            </button>
+
+            <div class="profile-menu" [class.show]="showProfileMenu">
+                <div class="profile-header">
+                    <h4>Thông tin người dùng</h4>
+                </div>
+
+                <div class="profile-item">
+                    <span class="label">Tên:</span>
+                    <span class="value">{{ currentUser?.name || 'Người dùng' }}</span>
+                </div>
+
+                <div class="profile-item">
+                    <span class="label">Email:</span>
+                    <span class="value">{{ currentUser?.email || 'Chưa có email' }}</span>
+                </div>
+
+                <hr>
+
+                <button class="profile-action" type="button">
+                    📋 Nhật kí hoạt động
+                </button>
+
+                <hr>
+
+                <button class="logout-link" type="button" (click)="logout()">
+                    ↪ Log out
+                </button>
+            </div>
+        </div>
+
+    </header>
+
+    <!-- Nội dung chính -->
+    <main class="main-content">
+
+        <section class="hero">
+            <h1>Quản lý kho lưu trữ tài liệu</h1>
+            <p>Tìm kiếm, tải lên, chia sẻ và quản lý tài liệu cá nhân trên hệ thống.</p>
+
+            <!-- Thanh tìm kiếm chính giữa giống Google -->
+            <div class="center-search">
+                <input type="text" placeholder="Tìm kiếm theo tên, từ khóa hoặc nội dung bên trong tệp">
+                <button>Tìm kiếm</button>
+            </div>
+        </section>
+
+        <!-- Các chức năng nhanh -->
+        <section class="file-sections">
+
+            <!-- File gần đây -->
+            <div class="file-panel">
+                <div class="section-title">
+                    <h2>🕘 Tệp gần đây</h2>
+                    <a>Xem tất cả</a>
+                </div>
+
+                <div class="file-list">
+                    <div class="file-item" *ngFor="let file of recentFiles">
+                        <div class="file-icon">{{ file.icon }}</div>
+
+                        <div class="file-info">
+                            <h4>{{ file.name }}</h4>
+                            <p>{{ file.type }} • {{ file.date }}</p>
+                        </div>
+
+                        <button class="file-more">⋮</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File yêu thích -->
+            <div class="file-panel">
+                <div class="section-title">
+                    <h2>⭐ Tệp yêu thích</h2>
+                    <a>Xem tất cả</a>
+                </div>
+
+                <div class="file-list">
+                    <div class="file-item" *ngFor="let file of favoriteFiles">
+                        <div class="file-icon">{{ file.icon }}</div>
+
+                        <div class="file-info">
+                            <h4>{{ file.name }}</h4>
+                            <p>{{ file.type }} • {{ file.date }}</p>
+                        </div>
+
+                        <button class="file-more">⋮</button>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
