@@ -7,7 +7,7 @@
             <div class="logo">Document Storage</div>
 
             <nav class="menu">
-                <a routerLink="/home">Trang chủ</a>
+                <a type="button" (click)="openSection('home')">Trang chủ</a>
 
                 <div class="dropdown">
                     <button class="drop-btn" type="button" (click)="toggleStorageMenu()">
@@ -15,24 +15,22 @@
                     </button>
 
                     <div class="dropdown-menu" [class.show]="showStorageMenu">
-                        <a>Tài liệu của tôi</a>
-                        <a>Được chia sẻ với tôi</a>
-                        <a>Gần đây</a>
-                        <a>Yêu thích</a>
-                        <a>Thùng rác</a>
+                        <a (click)="goToProtectedSection('my-files')">Tài liệu của tôi</a>
+                        <a (click)="goToProtectedSection('shared-with-me')">Được chia sẻ với tôi</a>
+                        <a (click)="goToProtectedSection('recent')">Gần đây</a>
+                        <a (click)="goToProtectedSection('starred')">Yêu thích</a>
+                        <a (click)="goToProtectedSection('trash')">Thùng rác</a>
                     </div>
                 </div>
 
-                <a routerLink="/upload">Upload</a>
+                <a (click)="goToProtectedPage('upload')">Upload</a>
             </nav>
         </div>
 
-        <!-- Thanh tìm kiếm phía trên -->
         <div class="top-search">
             <input type="text" placeholder="Tìm kiếm tài liệu...">
         </div>
 
-        <!-- Tài khoản cá nhân -->
         <div class="profile-dropdown">
             <button class="profile-btn" type="button" (click)="toggleProfileMenu()">
                 <span class="hamburger-icon">☰</span>
@@ -47,12 +45,12 @@
 
                 <div class="profile-item">
                     <span class="label">Tên:</span>
-                    <span class="value">{{ currentUser?.name || 'Người dùng' }}</span>
+                    <span class="value">{{ currentUser.name || 'Khách truy cập' }}</span>
                 </div>
 
                 <div class="profile-item">
                     <span class="label">Email:</span>
-                    <span class="value">{{ currentUser?.email || 'Chưa có email' }}</span>
+                    <span class="value">{{ currentUser.email || 'Chưa đăng nhập' }}</span>
                 </div>
 
                 <hr>
@@ -85,48 +83,37 @@
             </div>
         </section>
 
-        <!-- Các chức năng nhanh -->
-        <section class="file-sections">
+        <!-- Tài liệu được tìm kiếm nhiều -->
+        <section class="popular-files-section">
 
-            <!-- File gần đây -->
-            <div class="file-panel">
-                <div class="section-title">
-                    <h2>🕘 Tệp gần đây</h2>
-                    <a>Xem tất cả</a>
-                </div>
-
-                <div class="file-list">
-                    <div class="file-item" *ngFor="let file of recentFiles">
-                        <div class="file-icon">{{ file.icon }}</div>
-
-                        <div class="file-info">
-                            <h4>{{ file.name }}</h4>
-                            <p>{{ file.type }} • {{ file.date }}</p>
-                        </div>
-
-                        <button class="file-more">⋮</button>
-                    </div>
+            <div class="section-header">
+                <div>
+                    <h2>📌 Tài liệu được tìm kiếm nhiều</h2>
+                    <p>Những tài liệu phổ biến được nhiều người quan tâm và truy cập.</p>
                 </div>
             </div>
 
-            <!-- File yêu thích -->
-            <div class="file-panel">
-                <div class="section-title">
-                    <h2>⭐ Tệp yêu thích</h2>
-                    <a>Xem tất cả</a>
-                </div>
+            <div class="popular-file-grid">
+                <div class="popular-file-card" *ngFor="let file of popularFiles">
 
-                <div class="file-list">
-                    <div class="file-item" *ngFor="let file of favoriteFiles">
-                        <div class="file-icon">{{ file.icon }}</div>
+                    <div class="popular-file-top">
+                        <div class="popular-file-icon">{{ file.icon }}</div>
 
-                        <div class="file-info">
-                            <h4>{{ file.name }}</h4>
-                            <p>{{ file.type }} • {{ file.date }}</p>
+                        <div>
+                            <h3>{{ file.name }}</h3>
+                            <span>{{ file.type }}</span>
                         </div>
-
-                        <button class="file-more">⋮</button>
                     </div>
+
+                    <p class="popular-file-desc">
+                        {{ file.description }}
+                    </p>
+
+                    <div class="popular-file-bottom">
+                        <span>🔍 {{ file.searches }} lượt tìm kiếm</span>
+                        <button type="button">Đọc tệp</button>
+                    </div>
+
                 </div>
             </div>
 

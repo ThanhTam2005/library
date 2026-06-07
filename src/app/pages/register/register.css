@@ -23,8 +23,8 @@
 }
 
 form {
-    width: 450px;
-    padding: 40px;
+    width: 500px;
+    padding: 45px;
     border-radius: 20px;
 
     background: rgba(20, 20, 30, 0.85);
@@ -41,8 +41,8 @@ h2 {
     text-align: center;
     color: #d9b3ff;
     margin-bottom: 25px;
-    letter-spacing: 3px;
-    text-shadow: 0 0 15px #b366ff;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #b366ff;
 }
 
 p {
@@ -51,17 +51,17 @@ p {
 
 input {
     width: 100%;
-    padding: 14px;
-    margin-bottom: 15px;
+    padding: 16px;
+    margin-bottom: 16px;
 
     border-radius: 12px;
     border: 1px solid rgba(180, 120, 255, 0.4);
 
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     color: white;
 
-    box-sizing: border-box;
     outline: none;
+    box-sizing: border-box;
     transition: 0.3s;
 }
 
@@ -70,13 +70,13 @@ input::placeholder {
 }
 
 input:focus {
-    border-color: #bb86fc;
+    border-color: hsl(267, 95%, 76%);
     box-shadow: 0 0 15px #8a2be2;
 }
 
 button {
     width: 100%;
-    padding: 14px;
+    padding: 16px;
 
     border: none;
     border-radius: 12px;
@@ -88,11 +88,14 @@ button {
     );
 
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
 
     cursor: pointer;
     transition: 0.3s;
+}
+h2 {
+    font-size: 28px;
 }
 
 button:hover {
@@ -103,21 +106,7 @@ button:hover {
         0 0 30px #6a0dad;
 }
 
-.switch-page {
-    text-align: center;
-    margin-top: 15px;
-    color: #d9b3ff;
-}
-
-.switch-page a {
-    color: #bb86fc;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.switch-page a:hover {
-    text-shadow: 0 0 10px #bb86fc;
-}
+/* Hiệu ứng sao */
 .stars {
     position: fixed;
     inset: 0;
@@ -141,9 +130,7 @@ button:hover {
         600px 300px white,
         800px 100px #e0aaff,
         1000px 250px white,
-        1200px 120px #d9b3ff,
-        300px 400px white,
-        700px 500px #bb86fc;
+        1200px 120px #d9b3ff;
 
     animation: twinkle 3s infinite alternate;
 }
@@ -151,7 +138,50 @@ button:hover {
 .stars::after {
     animation-delay: 1.5s;
 }
+.switch-page {
+    margin-top: 20px;
+    text-align: center;
+    color: #d9b3ff;
+    font-size: 18px;
+}
 
+.switch-page a {
+    color: #c77dff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.switch-page a:hover {
+    color: white;
+    text-shadow:
+        0 0 10px #c77dff,
+        0 0 20px #9d4edd;
+}
+.password-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-container input {
+    width: 100%;
+    padding-right: 50px;
+}
+
+.password-container i {
+    position: absolute;
+    right: 15px;
+    top: 40%;
+    transform: translateY(-50%);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 10;
+}
+
+.password-container i:hover {
+    color: #d9b3ff;
+}
 @keyframes twinkle {
     from {
         opacity: 0.2;
@@ -162,25 +192,4 @@ button:hover {
         opacity: 1;
         transform: scale(1.8);
     }
-}
-.password-container {
-  position: relative;
-  width: 100%;
-}
-
-.password-container input {
-  width: 100%;
-  padding-right: 45px;
-  box-sizing: border-box;
-}
-
-.password-container i {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;        /* màu trắng */
-  cursor: pointer;
-  font-size: 18px;
-  z-index: 10;
 }

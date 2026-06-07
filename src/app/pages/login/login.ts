@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
@@ -16,7 +16,21 @@ export class LoginComponent {
     password: ''
   };
 
-  constructor(private router: Router) { }
+  admin = {
+    email: 'admin@gmail.com',
+    password: 'admin123'
+  };
+
+  showPassword = false;
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
+
+  goRegister() {
+    this.router.navigate(['/register']);
+  }
 
   login() {
 
@@ -37,6 +51,17 @@ export class LoginComponent {
       return;
     }
 
+    // Kiểm tra admin
+    if (
+      this.user.email === this.admin.email &&
+      this.user.password === this.admin.password
+    ) {
+      alert('Đăng nhập Admin thành công!');
+      this.router.navigate(['/admin']);
+      return;
+    }
+
+    // Kiểm tra user
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
 
     if (
@@ -44,7 +69,21 @@ export class LoginComponent {
       this.user.password === savedUser.password
     ) {
       alert('Đăng nhập thành công!');
-      this.router.navigate(['/home']);
+
+      localStorage.setItem('currentUser', JSON.stringify(savedUser));
+
+      const redirect = this.route.snapshot.queryParamMap.get('redirect');
+
+      if (redirect === 'upload') {
+        this.router.navigate(['/upload']);
+      } else if (redirect) {
+        this.router.navigate(['/home'], {
+          queryParams: { section: redirect }
+        });
+      } else {
+        this.router.navigate(['/home']);
+      }
+
     } else {
       alert('Sai email hoặc mật khẩu!');
     }
