@@ -1,0 +1,104 @@
+<!-- Thanh tìm kiếm trên navbar -->
+<div class="top-search-component" *ngIf="mode === 'top'">
+    <input type="text" placeholder="Tìm kiếm tài liệu..." [(ngModel)]="keyword">
+</div>
+
+<!-- Thanh tìm kiếm chính giữa + kết quả -->
+<div class="main-search-component" *ngIf="mode === 'main'">
+
+    <div class="center-search">
+        <input type="text" placeholder="Tìm kiếm theo tên, từ khóa hoặc nội dung bên trong tệp" [(ngModel)]="keyword">
+
+        <button type="button">Tìm kiếm</button>
+    </div>
+
+    <section class="search-result-section">
+
+        <!-- Khi đang nhập từ khóa -->
+        <div *ngIf="keyword.trim() !== ''">
+
+            <div class="section-header">
+                <div>
+                    <h2>🔍 Kết quả tìm kiếm</h2>
+                    <p>
+                        Tìm thấy {{ searchResults.length }} file/thư mục phù hợp với từ khóa "{{ keyword }}".
+                    </p>
+                </div>
+
+                <button class="clear-btn" type="button" (click)="clearSearch()">
+                    Xóa tìm kiếm
+                </button>
+            </div>
+
+            <div class="empty-result" *ngIf="searchResults.length === 0">
+                Không tìm thấy file hoặc thư mục phù hợp.
+            </div>
+
+            <div class="result-grid" *ngIf="searchResults.length > 0">
+                <div class="result-card" *ngFor="let item of searchResults">
+
+                    <div class="result-top">
+                        <div class="result-icon">{{ item.icon }}</div>
+
+                        <div>
+                            <h3>{{ item.name }}</h3>
+                            <span>
+                                {{ item.type }} • {{ item.category === 'folder' ? 'Thư mục' : 'Tệp' }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <p>{{ item.description }}</p>
+
+                    <div class="result-bottom">
+                        <span>Người tạo: {{ item.creator }}</span>
+
+                        <button type="button" (click)="readItem(item)">
+                            {{ item.category === 'folder' ? 'Mở thư mục' : 'Đọc tệp' }}
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Khi chưa nhập từ khóa -->
+        <div *ngIf="keyword.trim() === ''">
+
+            <div class="section-header">
+                <div>
+                    <h2>📌 Tài liệu được tìm kiếm nhiều</h2>
+                    <p>Những tài liệu phổ biến được nhiều người quan tâm và truy cập.</p>
+                </div>
+            </div>
+
+            <div class="popular-file-grid">
+                <div class="popular-file-card" *ngFor="let file of popularFiles">
+
+                    <div class="popular-file-top">
+                        <div class="popular-file-icon">{{ file.icon }}</div>
+
+                        <div>
+                            <h3>{{ file.name }}</h3>
+                            <span>{{ file.type }}</span>
+                        </div>
+                    </div>
+
+                    <p class="popular-file-desc">
+                        {{ file.description }}
+                    </p>
+
+                    <div class="popular-file-bottom">
+                        <span>🔍 {{ file.searches }} lượt tìm kiếm</span>
+                        <button type="button" (click)="readItem(file)">Đọc tệp</button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
