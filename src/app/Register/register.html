@@ -1,0 +1,65 @@
+<div class="stars"></div>
+
+<div class="container">
+
+  <form (ngSubmit)="register()">
+
+    <h2>Đăng ký</h2>
+
+    <p>
+      <input
+        type="text"
+        name="fullName"
+        placeholder="Họ tên"
+        [(ngModel)]="user.fullName">
+    </p>
+
+    <p>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        [(ngModel)]="user.email"
+        required>
+    </p>
+
+<div class="password-container">
+  <input
+    [type]="showPassword ? 'text' : 'password'"
+    name="password"
+    placeholder="Mật khẩu"
+    [(ngModel)]="user.password">
+
+  <i
+    class="fa-solid"
+    [class.fa-eye]="!showPassword"
+    [class.fa-eye-slash]="showPassword"
+    (click)="showPassword = !showPassword">
+  </i>
+</div>
+
+<div class="password-container">
+  <input
+    [type]="showConfirmPassword ? 'text' : 'password'"
+    name="confirmPassword"
+    placeholder="Xác nhận mật khẩu"
+    [(ngModel)]="confirmPassword">
+
+  <i
+    class="fa-solid"
+    [class.fa-eye]="!showConfirmPassword"
+    [class.fa-eye-slash]="showConfirmPassword"
+    (click)="showConfirmPassword = !showConfirmPassword">
+  </i>
+</div>
+
+    <button type="submit">
+      Đăng ký
+    </button>
+<p class="switch-page">
+  Đã có tài khoản?
+  <a routerLink="/login">Đăng nhập</a>
+</p>
+  </form>
+
+</div>

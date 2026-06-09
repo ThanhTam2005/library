@@ -1,0 +1,12 @@
+<h1>TRANG QUẢN TRỊ ADMIN</h1>
+
+<button (click)="showUsers()">
+  Xem người dùng
+</button>
+
+<div *ngIf="user">
+  <h3>Thông tin người dùng</h3>
+
+  <p>Họ tên: {{user.fullName}}</p>
+  <p>Email: {{user.email}}</p>
+</div>
