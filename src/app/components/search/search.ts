@@ -1,6 +1,7 @@
 import { Component, Input, Injectable } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DocumentApiService, DocumentItem } from '../../services/document-api.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,56 +10,7 @@ export class SearchStateService {
 
   keyword = '';
 
-  documents = [
-    {
-      name: 'Báo cáo thực tập.docx',
-      type: 'Word',
-      category: 'file',
-      creator: 'Người dùng',
-      description: 'Tài liệu báo cáo thực tập và tổng kết quá trình thực hiện dự án.',
-      icon: '📄'
-    },
-    {
-      name: 'Khóa luận tốt nghiệp.pdf',
-      type: 'PDF',
-      category: 'file',
-      creator: 'Người dùng',
-      description: 'Tài liệu tham khảo về cấu trúc và cách trình bày khóa luận.',
-      icon: '📕'
-    },
-    {
-      name: 'Mẫu kế hoạch dự án.xlsx',
-      type: 'Excel',
-      category: 'file',
-      creator: 'Admin',
-      description: 'Biểu mẫu lập kế hoạch, phân công và theo dõi tiến độ dự án.',
-      icon: '📊'
-    },
-    {
-      name: 'Slide thuyết trình.pptx',
-      type: 'PowerPoint',
-      category: 'file',
-      creator: 'Admin',
-      description: 'Mẫu slide trình bày báo cáo, đồ án hoặc khóa luận.',
-      icon: '📽'
-    },
-    {
-      name: 'Tài liệu học tập',
-      type: 'Folder',
-      category: 'folder',
-      creator: 'Admin',
-      description: 'Thư mục chứa các tài liệu học tập, bài giảng và biểu mẫu.',
-      icon: '📁'
-    },
-    {
-      name: 'Dự án tốt nghiệp',
-      type: 'Folder',
-      category: 'folder',
-      creator: 'Người dùng',
-      description: 'Thư mục lưu báo cáo, slide và tài liệu tham khảo cho dự án.',
-      icon: '📁'
-    }
-  ];
+  documents: any[] = [];
 
   popularFiles = [
     {
@@ -81,29 +33,17 @@ export class SearchStateService {
       searches: 74,
       description: 'Biểu mẫu lập kế hoạch, phân công công việc và theo dõi tiến độ dự án.',
       icon: '📊'
-    },
-    {
-      name: 'Slide thuyết trình.pptx',
-      type: 'PowerPoint',
-      searches: 63,
-      description: 'Mẫu slide trình bày báo cáo, đồ án hoặc khóa luận.',
-      icon: '📽'
-    },
-    {
-      name: 'Tài liệu yêu cầu hệ thống.docx',
-      type: 'Word',
-      searches: 51,
-      description: 'Tài liệu mô tả yêu cầu chức năng và phi chức năng của hệ thống.',
-      icon: '📄'
-    },
-    {
-      name: 'Biểu mẫu đăng ký.pdf',
-      type: 'PDF',
-      searches: 39,
-      description: 'Các biểu mẫu thường dùng trong quá trình học tập và làm việc.',
-      icon: '📕'
     }
   ];
+
+  setDocuments(data: DocumentItem[]) {
+    this.documents = data.map(item => ({
+      ...item,
+      category: 'file',
+      creator: 'Admin',
+      icon: this.getIcon(item.type)
+    }));
+  }
 
   get searchResults() {
     const key = this.keyword.toLowerCase().trim();
@@ -115,9 +55,20 @@ export class SearchStateService {
     return this.documents.filter(item =>
       item.name.toLowerCase().includes(key) ||
       item.type.toLowerCase().includes(key) ||
-      item.creator.toLowerCase().includes(key) ||
-      item.description.toLowerCase().includes(key)
+      item.description.toLowerCase().includes(key) ||
+      item.creator.toLowerCase().includes(key)
     );
+  }
+
+  getIcon(type: string) {
+    const lowerType = type.toLowerCase();
+
+    if (lowerType.includes('pdf')) return '📕';
+    if (lowerType.includes('word')) return '📄';
+    if (lowerType.includes('excel')) return '📊';
+    if (lowerType.includes('powerpoint')) return '📽';
+
+    return '📁';
   }
 }
 
@@ -132,7 +83,22 @@ export class Search {
 
   @Input() mode: 'top' | 'main' = 'main';
 
-  constructor(public searchState: SearchStateService) { }
+  constructor(
+    public searchState: SearchStateService,
+    private documentApi: DocumentApiService
+  ) { }
+
+  ngOnInit() {
+    this.documentApi.getDocuments().subscribe({
+      next: (data) => {
+        this.searchState.setDocuments(data);
+        console.log('Dữ liệu lấy từ API:', data);
+      },
+      error: (error) => {
+        console.error('Lỗi gọi API documents:', error);
+      }
+    });
+  }
 
   get keyword() {
     return this.searchState.keyword;
