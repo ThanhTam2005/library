@@ -5,7 +5,6 @@
 
         <div class="navbar-left">
             <div class="logo">Document Storage</div>
-
             <nav class="menu">
                 <a type="button" (click)="openSection('home')">Trang chủ</a>
 
@@ -31,41 +30,65 @@
             <app-search mode="top"></app-search>
         </div>
 
-        <div class="profile-dropdown">
-            <button class="profile-btn" type="button" (click)="toggleProfileMenu()">
-                <span class="hamburger-icon">☰</span>
-                <span>Tài khoản cá nhân</span>
-                <span>▾</span>
-            </button>
+        <!-- Tài khoản -->
+<div class="profile-dropdown">
 
-            <div class="profile-menu" [class.show]="showProfileMenu">
-                <div class="profile-header">
-                    <h4>Thông tin người dùng</h4>
-                </div>
+    <button
+        class="profile-btn"
+        type="button"
+        (click)="toggleProfileMenu(); $event.stopPropagation()">
 
-                <div class="profile-item">
-                    <span class="label">Tên:</span>
-                    <span class="value">{{ currentUser.name || 'Khách truy cập' }}</span>
-                </div>
+        <span class="hamburger-icon">☰</span>
+        <span>▾</span>
+    </button>
 
-                <div class="profile-item">
-                    <span class="label">Email:</span>
-                    <span class="value">{{ currentUser.email || 'Chưa đăng nhập' }}</span>
-                </div>
+    <div class="profile-menu" [class.show]="showProfileMenu">
 
-                <hr>
-
-                <button class="profile-action" type="button">
-                    📋 Nhật kí hoạt động
-                </button>
-
-                <hr>
-
-                <button class="logout-link" type="button" (click)="logout()">
-                    ↪ Log out
-                </button>
-            </div>
+        <div class="profile-header">
+            <div class="avatar">👤</div>
+            <h4>Tài khoản của tôi</h4>
         </div>
+
+        <div class="profile-item">
+            <span class="label">Tên</span>
+            <span class="value">
+                {{ currentUser.fullName || 'Người dùng' }}
+            </span>
+        </div>
+
+        <div class="profile-item">
+            <span class="label">Email</span>
+            <span class="value">
+                {{ currentUser.email || 'Chưa có email' }}
+            </span>
+        </div>
+
+        <hr>
+
+        <button class="profile-action" type="button">
+            📋 Nhật ký hoạt động
+        </button>
+
+        <button class="profile-action" type="button">
+            ⭐ Tài liệu yêu thích
+        </button>
+
+        <button class="profile-action" type="button">
+            ⚙️ Cài đặt tài khoản
+        </button>
+
+        <hr>
+
+        <button
+            class="logout-link"
+            type="button"
+            (click)="logout()">
+            🚪 Đăng xuất
+        </button>
+
+    </div>
+
+</div>
 
     </header>
 

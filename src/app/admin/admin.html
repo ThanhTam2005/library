@@ -1,0 +1,137 @@
+<h1>TRANG QUẢN TRỊ ADMIN</h1>
+
+<div class="admin-menu">
+
+    <button class="menu-btn" (click)="showUsersTab()">
+        👥 Xem người dùng
+    </button>
+
+    <button class="menu-btn" (click)="showDocumentsTab()">
+        📁 Quản lý tài liệu
+    </button>
+
+</div>
+
+<!-- ================= USERS ================= -->
+<div *ngIf="currentTab === 'users'">
+
+    <h2>Danh sách người dùng</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let u of users; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ u.fullName }}</td>
+                <td>{{ u.email }}</td>
+                <td>
+                    <button class="delete-btn" (click)="deleteUser(i)">
+                        Xóa
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- ================= DOCUMENTS ================= -->
+<div *ngIf="currentTab === 'documents'">
+
+    <h2>Quản lý tài liệu</h2>
+
+    <!-- 🔍 SEARCH -->
+    <div class="form-box">
+        <input
+            type="text"
+            placeholder="Tìm theo ID / tên / tác giả..."
+            [(ngModel)]="searchText"
+            (input)="filterDocuments()"
+        />
+    </div>
+
+    <!-- ➕ FORM -->
+    <div class="form-box">
+
+        <input
+            type="text"
+            placeholder="Tên tài liệu"
+            [(ngModel)]="newDoc.title"
+        >
+
+        <input
+            type="text"
+            placeholder="Tác giả"
+            [(ngModel)]="newDoc.author"
+        >
+
+        <!-- 📂 FILE UPLOAD -->
+        <input
+            type="file"
+            (change)="onFileSelected($event)"
+        >
+
+        <button
+            *ngIf="editIndex === -1"
+            (click)="addDocument()">
+            Thêm tài liệu
+        </button>
+
+        <button
+            *ngIf="editIndex !== -1"
+            (click)="updateDocument()">
+            Cập nhật
+        </button>
+
+    </div>
+
+    <!-- 📋 TABLE -->
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tên tài liệu</th>
+                <th>Tác giả</th>
+                <th>File</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let doc of filteredDocuments; let i = index">
+
+                <td>{{ doc.id }}</td>
+                <td>{{ doc.title }}</td>
+                <td>{{ doc.author }}</td>
+
+                <td>
+                    {{ doc.fileName || 'Không có file' }}
+                </td>
+
+                <td>
+                    <button class="edit-btn" (click)="editDocument(i)">
+                        Sửa
+                    </button>
+
+                    <button class="delete-btn" (click)="deleteDocument(i)">
+                        Xóa
+                    </button>
+                </td>
+
+            </tr>
+        </tbody>
+
+    </table>
+
+</div>
