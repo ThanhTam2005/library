@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { Search } from '../../components/search/search';
-
+import {  HostListener } from '@angular/core';
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -17,7 +17,7 @@ export class Home {
   showProfileMenu = false;
 
   currentUser = {
-    name: 'Người dùng',
+    fullName: 'Người dùng',
     email: 'Chưa có email'
   };
 
@@ -59,7 +59,7 @@ export class Home {
   logout() {
     localStorage.removeItem('currentUser');
     this.currentUser = {
-      name: 'Khách truy cập',
+      fullName: 'Khách truy cập',
       email: 'Chưa đăng nhập'
     };
     this.currentSection = 'home';
@@ -95,5 +95,17 @@ export class Home {
       });
     }
   }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
 
+  const target = event.target as HTMLElement;
+
+  if (!target.closest('.profile-dropdown')) {
+    this.showProfileMenu = false;
+  }
+
+  if (!target.closest('.dropdown')) {
+    this.showStorageMenu = false;
+  }
+}
 }

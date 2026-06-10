@@ -19,7 +19,8 @@ export class LoginComponent {
   admin = {
     email: 'admin@gmail.com',
     password: 'admin123'
-  };
+  
+};
 
   showPassword = false;
 
@@ -53,13 +54,17 @@ export class LoginComponent {
 
     // Kiểm tra admin
     if (
-      this.user.email === this.admin.email &&
-      this.user.password === this.admin.password
-    ) {
-      alert('Đăng nhập Admin thành công!');
-      this.router.navigate(['/admin']);
-      return;
-    }
+  this.user.email === this.admin.email &&
+  this.user.password === this.admin.password
+) {
+  console.log('ADMIN LOGIN OK');
+
+  alert('Đăng nhập Admin thành công!');
+
+  this.router.navigate(['/admin']);
+
+  return;
+}
 
     // Kiểm tra user
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');

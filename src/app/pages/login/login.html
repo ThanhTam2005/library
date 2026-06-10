@@ -7,17 +7,29 @@
     <h2>Đăng nhập</h2>
 
     <p>
-      <input type="email" name="email" placeholder="Email" [(ngModel)]="user.email" required>
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        [(ngModel)]="user.email"
+        required>
     </p>
 
-    <div class="password-container">
-      <input [type]="showPassword ? 'text' : 'password'" name="password" placeholder="Mật khẩu"
-        [(ngModel)]="user.password" required>
+  <div class="password-container">
+  <input
+    [type]="showPassword ? 'text' : 'password'"
+    name="password"
+    placeholder="Mật khẩu"
+    [(ngModel)]="user.password"
+    required>
 
-      <i class="fa-solid" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"
-        (click)="showPassword = !showPassword">
-      </i>
-    </div>
+  <i
+    class="fa-solid"
+    [class.fa-eye]="!showPassword"
+    [class.fa-eye-slash]="showPassword"
+    (click)="showPassword = !showPassword">
+  </i>
+</div>
 
     <button type="submit">
       Đăng nhập
