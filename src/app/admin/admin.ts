@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin',
@@ -32,6 +33,8 @@ export class AdminComponent implements OnInit {
   // SEARCH
   searchText: string = '';
 
+  constructor(private http: HttpClient) { }
+
   ngOnInit() {
     const savedDocs = localStorage.getItem('documents');
 
@@ -42,32 +45,38 @@ export class AdminComponent implements OnInit {
   }
 
   // ================= USER =================
+
   showUsersTab() {
     this.currentTab = 'users';
+    this.getUsersFromDatabase();
+  }
 
-    const user = JSON.parse(
-      localStorage.getItem('user') || '{}'
-    );
-
-    this.users = [];
-
-    if (user.email) {
-      this.users.push(user);
-    }
+  getUsersFromDatabase() {
+    this.http.get<any[]>('http://localhost:3000/api/users')
+      .subscribe({
+        next: (data) => {
+          this.users = data;
+          console.log('Danh sách người dùng từ database:', data);
+        },
+        error: (error) => {
+          console.error('Lỗi lấy danh sách người dùng:', error);
+          alert('Không lấy được danh sách người dùng từ database!');
+        }
+      });
   }
 
   deleteUser(index: number) {
     if (!confirm('Bạn có chắc muốn xóa người dùng?')) return;
 
-    localStorage.removeItem('user');
-    localStorage.removeItem('currentUser');
+    const user = this.users[index];
 
     this.users.splice(index, 1);
 
-    alert('Đã xóa người dùng!');
+    alert('Đã xóa người dùng khỏi giao diện!');
   }
 
   // ================= DOCUMENT =================
+
   showDocumentsTab() {
     this.currentTab = 'documents';
     this.filteredDocuments = [...this.documents];

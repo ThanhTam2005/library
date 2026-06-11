@@ -33,7 +33,7 @@ app.get('/api/documents', async (req, res) => {
         d.created_at,
         d.updated_at,
         f.name AS folder_name,
-        u.name AS owner_name
+        u.fullName AS owner_name
       FROM documents d
       LEFT JOIN folders f ON d.folder_id = f.id
       LEFT JOIN users u ON d.owner_id = u.id
@@ -76,7 +76,7 @@ app.get('/api/my-documents/:userId', async (req, res) => {
           d.created_at,
           d.updated_at,
           f.name AS folder_name,
-          u.name AS owner_name
+          u.fullName AS owner_name
         FROM documents d
         LEFT JOIN folders f ON d.folder_id = f.id
         LEFT JOIN users u ON d.owner_id = u.id
@@ -120,7 +120,7 @@ app.get('/api/documents/search', async (req, res) => {
           d.created_at,
           d.updated_at,
           f.name AS folder_name,
-          u.name AS owner_name
+          u.fullName AS owner_name
         FROM documents d
         LEFT JOIN folders f ON d.folder_id = f.id
         LEFT JOIN users u ON d.owner_id = u.id
@@ -145,6 +145,134 @@ app.get('/api/documents/search', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
+app.get('/api/users', async (req, res) => {
+    try {
+        const pool = await connectDB();
+
+        const result = await pool.request().query(`
+      SELECT 
+        id,
+        fullName,
+        email,
+        role,
+        created_at
+      FROM users
+      ORDER BY id ASC
+    `);
+
+        res.json(result.recordset);
+
+    } catch (error) {
+        console.error('Lỗi lấy users:', error);
+
+        res.status(500).json({
+            message: 'Lỗi lấy danh sách người dùng',
+            error: error.message
+        });
+    }
+});
+
+// Đăng ký người dùng mới
+app.post('/api/register', async (req, res) => {
+    try {
+        const { fullName, email, password } = req.body;
+
+        if (!fullName || !email || !password) {
+            return res.status(400).json({
+                message: 'Vui lòng nhập đầy đủ thông tin'
+            });
+        }
+
+        const pool = await connectDB();
+
+        // Kiểm tra email đã tồn tại chưa
+        const checkUser = await pool.request()
+            .input('email', sql.VarChar, email)
+            .query(`
+        SELECT id FROM users
+        WHERE email = @email
+      `);
+
+        if (checkUser.recordset.length > 0) {
+            return res.status(400).json({
+                message: 'Email đã tồn tại'
+            });
+        }
+
+        // Thêm user vào database
+        await pool.request()
+            .input('fullName', sql.NVarChar, fullName)
+            .input('email', sql.VarChar, email)
+            .input('password', sql.VarChar, password)
+            .input('role', sql.VarChar, 'USER')
+            .query(`
+        INSERT INTO users (fullName, email, password, role)
+        VALUES (@fullName, @email, @password, @role)
+      `);
+
+        res.json({
+            message: 'Đăng ký thành công'
+        });
+
+    } catch (error) {
+        console.error('Lỗi đăng ký:', error);
+
+        res.status(500).json({
+            message: 'Lỗi đăng ký người dùng',
+            error: error.message
+        });
+    }
+});
+
+// Đăng nhập người dùng
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'Vui lòng nhập email và mật khẩu'
+            });
+        }
+
+        const pool = await connectDB();
+
+        const result = await pool.request()
+            .input('email', sql.VarChar, email)
+            .input('password', sql.VarChar, password)
+            .query(`
+                SELECT 
+                    id,
+                    fullName,
+                    email,
+                    role,
+                    created_at
+                FROM users
+                WHERE email = @email
+                  AND password = @password
+            `);
+
+        if (result.recordset.length === 0) {
+            return res.status(401).json({
+                message: 'Sai email hoặc mật khẩu'
+            });
+        }
+
+        res.json({
+            message: 'Đăng nhập thành công',
+            user: result.recordset[0]
+        });
+
+    } catch (error) {
+        console.error('Lỗi đăng nhập:', error);
+
+        res.status(500).json({
+            message: 'Lỗi đăng nhập',
+            error: error.message
+        });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);

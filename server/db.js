@@ -2,13 +2,12 @@ const sql = require('mssql/msnodesqlv8');
 require('dotenv').config();
 
 const config = {
-    server: process.env.DB_SERVER || 'localhost',
-    database: process.env.DB_DATABASE || 'document_storage',
-    driver: 'msnodesqlv8',
-    options: {
-        trustedConnection: true,
-        trustServerCertificate: true
-    }
+    connectionString:
+        'Driver={ODBC Driver 17 for SQL Server};' +
+        'Server=localhost;' +
+        'Database=document_storage;' +
+        'Trusted_Connection=Yes;' +
+        'TrustServerCertificate=Yes;'
 };
 
 async function connectDB() {
