@@ -83,6 +83,10 @@
                             <h3>{{ file.name }}</h3>
                             <span>{{ file.type }}</span>
                         </div>
+
+                        <button type="button" class="favorite-btn" [class.favorited]="file.favorite" (click)="toggleFavorite(file)">
+                          ♥
+                        </button>
                     </div>
 
                     <p class="popular-file-desc">

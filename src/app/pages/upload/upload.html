@@ -1,1 +1,166 @@
-<p>upload works!</p>
+<div class="upload-page">
+  <header class="navbar">
+
+  <div class="navbar-left">
+    <div class="logo">Document Storage</div>
+
+    <nav class="menu">
+
+      <a routerLink="/home">Trang chủ</a>
+
+      <div class="dropdown">
+
+        <button
+          class="drop-btn"
+          type="button"
+          (click)="toggleStorageMenu()">
+
+          Kho lưu trữ ▾
+
+        </button>
+
+        <div
+          class="dropdown-menu"
+          [class.show]="showStorageMenu">
+
+          <a routerLink="/home" [queryParams]="{section:'my-files'}">
+  Tài liệu của tôi
+</a>
+
+<a routerLink="/home" [queryParams]="{section:'shared-with-me'}">
+  Được chia sẻ với tôi
+</a>
+
+<a routerLink="/home" [queryParams]="{section:'recent'}">
+  Gần đây
+</a>
+
+<a routerLink="/home" [queryParams]="{section:'starred'}">
+  Yêu thích
+</a>
+
+<a routerLink="/home" [queryParams]="{section:'trash'}">
+  Thùng rác
+</a>
+
+        </div>
+
+      </div>
+
+      <a routerLink="/upload">Upload</a>
+
+    </nav>
+  </div>
+
+  <div class="top-search">
+    <app-search mode="top"></app-search>
+  </div>
+
+  <div class="profile-dropdown">
+
+    <button
+      class="profile-btn"
+      type="button"
+      (click)="toggleProfileMenu()">
+
+      <span class="hamburger-icon">☰</span>
+      <span>Tài khoản cá nhân</span>
+      <span>▾</span>
+
+    </button>
+
+    <div
+      class="profile-menu"
+      [class.show]="showProfileMenu">
+
+      <div class="profile-card">
+
+        <div class="profile-top">
+
+           <div class="avatar large">
+      {{ currentUser.name.charAt(0) }}
+    </div>
+
+    <div class="profile-name-block">
+      <h4>{{ currentUser.name }}</h4>
+    </div>
+
+    <button class="edit-btn">
+      Chỉnh sửa
+    </button>
+
+    <div class="profile-email">
+      {{ currentUser.email }}
+    </div>
+
+  </div>
+
+  <div class="profile-sep"></div>
+
+  <div class="profile-actions">
+
+    <button class="activity-log">
+      📜 Nhật kí hoạt động
+    </button>
+
+    <button
+      class="logout"
+      (click)="logout()">
+
+      ⊗ Đăng xuất
+
+    </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+  <main class="main-content">
+    <div class="upload-card">
+      <h2>Upload tài liệu</h2>
+      <p>Nhập thông tin tài liệu và chọn file từ máy tính của bạn.</p>
+
+      <form (ngSubmit)="upload()">
+        <div class="form-group">
+          <label for="title">Tên tài liệu</label>
+          <input id="title" name="title" type="text" [(ngModel)]="uploadData.title" placeholder="Nhập tên tài liệu" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Mô tả</label>
+          <textarea id="description" name="description" rows="4" [(ngModel)]="uploadData.description" placeholder="Nhập mô tả ngắn"></textarea>
+        </div>
+
+        <div class="form-group upload-select-group">
+          <label for="file">Chọn tệp hoặc thư mục</label>
+
+          <div class="upload-select-controls">
+            <input id="file" type="file" (change)="onFileSelected($event)" multiple>
+            <button type="button" class="folder-button" (click)="chooseFolder()">
+              Chọn thư mục
+            </button>
+          </div>
+
+          <input id="folder" type="file" (change)="onFolderSelected($event)" webkitdirectory directory multiple hidden>
+          <div class="file-info" *ngIf="filePreview">{{ filePreview }}</div>
+        </div>
+
+        <button type="submit">Upload</button>
+      </form>
+
+      <div class="upload-note">
+        <p>Hỗ trợ upload file và thư mục: .doc, .png, thư mục, và nhiều định dạng khác.</p>
+      </div>
+
+      <div class="success-message" *ngIf="uploadMessage">
+        {{ uploadMessage }}
+      </div>
+    </div>
+  </main>
+</div>

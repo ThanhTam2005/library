@@ -109,6 +109,22 @@ button:hover {
     color: #d9b3ff;
 }
 
+.switch-page .button-home {
+    display: inline-block;
+    width: auto;
+    margin-top: 10px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    border: 1px solid rgba(187, 134, 252, 0.7);
+    background: rgba(255, 255, 255, 0.08);
+    color: #bb86fc;
+    font-weight: 700;
+}
+
+.switch-page .button-home:hover {
+    background: rgba(187, 134, 252, 0.15);
+}
+
 .switch-page a {
     color: #bb86fc;
     text-decoration: none;

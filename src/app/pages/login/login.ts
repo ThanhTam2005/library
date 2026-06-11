@@ -32,6 +32,10 @@ export class LoginComponent {
     this.router.navigate(['/register']);
   }
 
+  goHome() {
+    this.router.navigate(['/home']);
+  }
+
   login() {
 
     if (this.user.email.trim() === '') {
@@ -57,7 +61,9 @@ export class LoginComponent {
       this.user.password === this.admin.password
     ) {
       alert('Đăng nhập Admin thành công!');
-      this.router.navigate(['/admin']);
+      const adminUser = { name: 'Admin', email: this.admin.email };
+      localStorage.setItem('currentUser', JSON.stringify(adminUser));
+      this.router.navigate(['/home']);
       return;
     }
 
@@ -70,7 +76,12 @@ export class LoginComponent {
     ) {
       alert('Đăng nhập thành công!');
 
-      localStorage.setItem('currentUser', JSON.stringify(savedUser));
+      const currentUser = {
+        name: savedUser.fullName || savedUser.name || 'Người dùng',
+        email: savedUser.email
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
       const redirect = this.route.snapshot.queryParamMap.get('redirect');
 
