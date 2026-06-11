@@ -6,8 +6,8 @@ import { Upload } from './pages/upload/upload';
 import { AdminComponent } from './admin/admin';
 
 export const routes: Routes = [
-  { path: '', component: Home }, // Trang đầu tiên
 
+  { path: '', component: Home },
   { path: 'home', component: Home },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },

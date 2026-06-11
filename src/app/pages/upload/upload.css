@@ -1,0 +1,313 @@
+* {
+  box-sizing: border-box;
+}
+
+.upload-page {
+  min-height: 100vh;
+  background: #f6f7fb;
+  font-family: Arial, sans-serif;
+  color: #202124;
+}
+
+/* ================= NAVBAR ================= */
+
+.navbar {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex-shrink: 0;
+}
+
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+  color: #6d28d9;
+  white-space: nowrap;
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #222;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.menu a:hover {
+  color: #6d28d9;
+}
+
+/* ================= DROPDOWN ================= */
+
+.dropdown {
+  position: relative;
+}
+
+.drop-btn {
+  background: transparent;
+  border: none;
+  color: #222;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 42px;
+  left: 0;
+  width: 280px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 10px 0;
+  z-index: 999;
+}
+
+.dropdown-menu.show {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  width: 100%;
+  padding: 14px 20px;
+  color: #333;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dropdown-menu a:hover {
+  background: #f5f5f5;
+}
+
+/* ================= SEARCH ================= */
+
+.top-search {
+  width: 620px;
+  max-width: 620px;
+  flex-shrink: 0;
+}
+
+/* ================= PROFILE ================= */
+
+.profile-dropdown {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  color: #222;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 8px;
+}
+
+.profile-menu {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 560px;
+  background: white;
+  border-radius: 28px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  padding: 22px;
+  z-index: 999;
+}
+
+.profile-menu.show {
+  display: block;
+}
+
+.profile-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 22px;
+}
+
+.profile-top {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.avatar.large {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #9b59b6;
+  color: white;
+  font-size: 42px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-name-block {
+  width: 140px;
+}
+
+.profile-name-block h4 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111827;
+}
+
+.edit-btn {
+  background: #f5f3ff;
+  color: #6d28d9;
+  border: 1px solid #ddd6fe;
+  border-radius: 14px;
+  padding: 14px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-email {
+  flex: 1;
+  font-size: 18px;
+  color: #4b5563;
+  word-break: break-word;
+}
+
+.profile-sep {
+  height: 1px;
+  background: #e5e7eb;
+  margin: 24px 0;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.activity-log {
+  flex: 1;
+  background: #f3efff;
+  color: #6d28d9;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logout {
+  flex: 1;
+  background: #fff1f2;
+  color: #dc2626;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ================= MAIN ================= */
+
+.main-content {
+  padding: 48px 60px;
+}
+
+.upload-card {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.06);
+  width: 100%;
+}
+
+.upload-card h2 {
+  margin-top: 0;
+  color: #1f2937;
+  font-size: 32px;
+}
+
+.upload-card p {
+  color: #6b7280;
+  margin-bottom: 28px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  font-weight: 600;
+}
+
+input[type="text"],
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #d6d6e7;
+  border-radius: 16px;
+  background: #f8f8ff;
+}
+
+.upload-select-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.folder-button,
+button[type="submit"] {
+  background: #6d28d9;
+  color: white;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+.folder-button:hover,
+button[type="submit"]:hover {
+  background: #7c3aed;
+}
+
+.file-info,
+.upload-note,
+.success-message {
+  margin-top: 14px;
+}
+
+.success-message {
+  padding: 14px;
+  background: #eef2ff;
+  border-radius: 12px;
+}

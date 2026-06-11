@@ -115,6 +115,25 @@
   margin-bottom: 14px;
 }
 
+.favorite-btn {
+  border: none;
+  background: transparent;
+  color: #4b5563;
+  font-size: 20px;
+  padding: 6px;
+  margin-left: auto;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.favorite-btn.favorited {
+  color: #be185d;
+}
+
+.favorite-btn:hover {
+  color: #991b1b;
+}
+
 .result-icon,
 .popular-file-icon {
   width: 50px;

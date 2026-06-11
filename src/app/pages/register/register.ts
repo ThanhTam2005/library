@@ -17,6 +17,13 @@ export class RegisterComponent {
     private http: HttpClient
   ) { }
 
+  private addActivityLog(message: string) {
+    const savedActivityLog = JSON.parse(localStorage.getItem('activityLog') || '[]');
+    const activityList = Array.isArray(savedActivityLog) ? savedActivityLog : [];
+    activityList.unshift({ message, timestamp: new Date().toISOString() });
+    localStorage.setItem('activityLog', JSON.stringify(activityList));
+  }
+
   user = {
     fullName: '',
     email: '',
@@ -78,4 +85,19 @@ export class RegisterComponent {
         }
       });
   }
+<<<<<<< HEAD
+=======
+  localStorage.setItem('user', JSON.stringify(this.user));
+  const currentUser = {
+    name: this.user.fullName,
+    email: this.user.email
+  };
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  this.addActivityLog(`Đăng ký tài khoản mới ${this.user.email}`);
+  alert('Đăng ký thành công!');
+  this.router.navigate(['/home']);
+  }
+  showPassword = false;
+  showConfirmPassword = false;
+>>>>>>> thach
 }

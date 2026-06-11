@@ -29,6 +29,10 @@ export class LoginComponent {
     this.router.navigate(['/register']);
   }
 
+  goHome() {
+    this.router.navigate(['/home']);
+  }
+
   login() {
 
     if (this.user.email.trim() === '') {
@@ -48,21 +52,44 @@ export class LoginComponent {
       return;
     }
 
+<<<<<<< HEAD
     this.http.post<any>('http://localhost:3000/api/login', {
       email: this.user.email,
       password: this.user.password
     }).subscribe({
       next: (res) => {
         alert(res.message || 'Đăng nhập thành công!');
+=======
+    // Kiểm tra admin
+    if (
+      this.user.email === this.admin.email &&
+      this.user.password === this.admin.password
+    ) {
+      alert('Đăng nhập Admin thành công!');
+      const adminUser = { name: 'Admin', email: this.admin.email };
+      localStorage.setItem('currentUser', JSON.stringify(adminUser));
+      this.router.navigate(['/home']);
+      return;
+    }
+>>>>>>> thach
 
         localStorage.setItem('currentUser', JSON.stringify(res.user));
 
         const redirect = this.route.snapshot.queryParamMap.get('redirect');
 
+<<<<<<< HEAD
         if (res.user.role === 'ADMIN') {
           this.router.navigate(['/admin']);
           return;
         }
+=======
+      const currentUser = {
+        name: savedUser.fullName || savedUser.name || 'Người dùng',
+        email: savedUser.email
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+>>>>>>> thach
 
         if (redirect === 'upload') {
           this.router.navigate(['/upload']);
