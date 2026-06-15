@@ -17,13 +17,6 @@ export class RegisterComponent {
     private http: HttpClient
   ) { }
 
-  private addActivityLog(message: string) {
-    const savedActivityLog = JSON.parse(localStorage.getItem('activityLog') || '[]');
-    const activityList = Array.isArray(savedActivityLog) ? savedActivityLog : [];
-    activityList.unshift({ message, timestamp: new Date().toISOString() });
-    localStorage.setItem('activityLog', JSON.stringify(activityList));
-  }
-
   user = {
     fullName: '',
     email: '',
@@ -35,15 +28,25 @@ export class RegisterComponent {
   showPassword = false;
   showConfirmPassword = false;
 
+  private addActivityLog(message: string) {
+    const savedActivityLog = JSON.parse(localStorage.getItem('activityLog') || '[]');
+    const activityList = Array.isArray(savedActivityLog) ? savedActivityLog : [];
+
+    activityList.unshift({
+      message,
+      timestamp: new Date().toISOString()
+    });
+
+    localStorage.setItem('activityLog', JSON.stringify(activityList));
+  }
+
   register() {
 
-    // Kiểm tra họ tên
     if (this.user.fullName.trim() === '') {
       alert('Vui lòng nhập họ tên!');
       return;
     }
 
-    // Kiểm tra email
     if (this.user.email.trim() === '') {
       alert('Vui lòng nhập email!');
       return;
@@ -56,13 +59,11 @@ export class RegisterComponent {
       return;
     }
 
-    // Kiểm tra mật khẩu
     if (this.user.password.length < 6) {
       alert('Mật khẩu phải có ít nhất 6 ký tự!');
       return;
     }
 
-    // Kiểm tra xác nhận mật khẩu
     if (this.user.password !== this.confirmPassword) {
       alert('Mật khẩu xác nhận không khớp!');
       return;
@@ -77,7 +78,10 @@ export class RegisterComponent {
     this.http.post<any>('http://localhost:3000/api/register', registerData)
       .subscribe({
         next: (res) => {
+          this.addActivityLog(`Đăng ký tài khoản mới ${this.user.email}`);
+
           alert(res.message || 'Đăng ký thành công!');
+
           this.router.navigate(['/login']);
         },
         error: (err) => {
@@ -85,19 +89,4 @@ export class RegisterComponent {
         }
       });
   }
-<<<<<<< HEAD
-=======
-  localStorage.setItem('user', JSON.stringify(this.user));
-  const currentUser = {
-    name: this.user.fullName,
-    email: this.user.email
-  };
-  localStorage.setItem('currentUser', JSON.stringify(currentUser));
-  this.addActivityLog(`Đăng ký tài khoản mới ${this.user.email}`);
-  alert('Đăng ký thành công!');
-  this.router.navigate(['/home']);
-  }
-  showPassword = false;
-  showConfirmPassword = false;
->>>>>>> thach
 }

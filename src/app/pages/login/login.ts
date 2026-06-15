@@ -17,6 +17,11 @@ export class LoginComponent {
     password: ''
   };
 
+  admin = {
+    email: 'admin@gmail.com',
+    password: '123456'
+  };
+
   showPassword = false;
 
   constructor(
@@ -52,44 +57,48 @@ export class LoginComponent {
       return;
     }
 
-<<<<<<< HEAD
+    // Kiểm tra admin cứng
+    if (
+      this.user.email === this.admin.email &&
+      this.user.password === this.admin.password
+    ) {
+      alert('Đăng nhập Admin thành công!');
+
+      const adminUser = {
+        name: 'Admin',
+        email: this.admin.email,
+        role: 'ADMIN'
+      };
+
+      localStorage.setItem('currentUser', JSON.stringify(adminUser));
+      this.router.navigate(['/admin']);
+      return;
+    }
+
+    // Đăng nhập bằng API
     this.http.post<any>('http://localhost:3000/api/login', {
       email: this.user.email,
       password: this.user.password
     }).subscribe({
       next: (res) => {
         alert(res.message || 'Đăng nhập thành công!');
-=======
-    // Kiểm tra admin
-    if (
-      this.user.email === this.admin.email &&
-      this.user.password === this.admin.password
-    ) {
-      alert('Đăng nhập Admin thành công!');
-      const adminUser = { name: 'Admin', email: this.admin.email };
-      localStorage.setItem('currentUser', JSON.stringify(adminUser));
-      this.router.navigate(['/home']);
-      return;
-    }
->>>>>>> thach
 
-        localStorage.setItem('currentUser', JSON.stringify(res.user));
+        const savedUser = res.user;
 
-        const redirect = this.route.snapshot.queryParamMap.get('redirect');
+        const currentUser = {
+          name: savedUser.fullName || savedUser.name || 'Người dùng',
+          email: savedUser.email,
+          role: savedUser.role
+        };
 
-<<<<<<< HEAD
-        if (res.user.role === 'ADMIN') {
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+        if (savedUser.role === 'ADMIN') {
           this.router.navigate(['/admin']);
           return;
         }
-=======
-      const currentUser = {
-        name: savedUser.fullName || savedUser.name || 'Người dùng',
-        email: savedUser.email
-      };
 
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
->>>>>>> thach
+        const redirect = this.route.snapshot.queryParamMap.get('redirect');
 
         if (redirect === 'upload') {
           this.router.navigate(['/upload']);

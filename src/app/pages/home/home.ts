@@ -1,10 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ChangeDetectorRef, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef } from '@angular/core';
 import { Search } from '../../components/search/search';
-import {  HostListener } from '@angular/core';
+
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -17,13 +16,8 @@ export class Home implements OnInit, OnDestroy {
   showProfileMenu = false;
 
   currentUser = {
-<<<<<<< HEAD
-    fullName: 'Người dùng',
-    email: 'Chưa có email'
-=======
-    name: 'Khách truy cập',
+    fullName: 'Khách truy cập',
     email: ''
->>>>>>> thach
   };
 
   uploadedDocuments: any[] = [];
@@ -54,29 +48,32 @@ export class Home implements OnInit, OnDestroy {
       this.currentSection = section;
     }
 
-    // Load uploads on init
     const savedUploads = JSON.parse(localStorage.getItem('uploads') || '[]');
     this.uploadedDocuments = Array.isArray(savedUploads) ? savedUploads : [];
+
     const savedTrash = JSON.parse(localStorage.getItem('trash') || '[]');
     this.deletedDocuments = Array.isArray(savedTrash) ? savedTrash : [];
+
     const savedActivityLog = JSON.parse(localStorage.getItem('activityLog') || '[]');
     this.activityLog = Array.isArray(savedActivityLog) ? savedActivityLog : [];
+
     this.loadFavoriteSearchFiles();
-    console.log('Home loaded uploads count =', this.uploadedDocuments.length, this.uploadedDocuments);
-    // ensure view updates
+
     try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
 
-    // Refresh uploadedDocuments after navigation (e.g., returning from upload page)
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         const saved = JSON.parse(localStorage.getItem('uploads') || '[]');
         this.uploadedDocuments = Array.isArray(saved) ? saved : [];
+
         const savedT = JSON.parse(localStorage.getItem('trash') || '[]');
         this.deletedDocuments = Array.isArray(savedT) ? savedT : [];
+
         const savedActivityLog = JSON.parse(localStorage.getItem('activityLog') || '[]');
         this.activityLog = Array.isArray(savedActivityLog) ? savedActivityLog : [];
+
         this.loadFavoriteSearchFiles();
-        console.log('Home after navigation, uploads count =', this.uploadedDocuments.length);
+
         try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
       }
     });
@@ -93,20 +90,20 @@ export class Home implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
       return;
     }
+
     this.showProfileMenu = !this.showProfileMenu;
   }
 
   isLoggedIn() {
-    return !!this.currentUser?.email && this.currentUser.email !== 'Chưa đăng nhập' && this.currentUser.email !== '';
+    return !!this.currentUser?.email && this.currentUser.email !== '';
   }
 
-  // Profile edit state
   editingName = false;
   editName = '';
 
   startEditName() {
     this.editingName = true;
-    this.editName = this.currentUser?.name || '';
+    this.editName = this.currentUser?.fullName || '';
   }
 
   saveName() {
@@ -115,10 +112,18 @@ export class Home implements OnInit, OnDestroy {
       return;
     }
 
-    this.currentUser = { ...this.currentUser, name: this.editName.trim() };
-    try { localStorage.setItem('currentUser', JSON.stringify(this.currentUser)); } catch (e) { /* noop */ }
+    this.currentUser = {
+      ...this.currentUser,
+      fullName: this.editName.trim()
+    };
+
+    try {
+      localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
+    } catch (e) { /* noop */ }
+
     this.addActivityLog(`Đã đổi tên người dùng thành "${this.editName.trim()}"`);
     this.editingName = false;
+
     try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
   }
 
@@ -128,6 +133,7 @@ export class Home implements OnInit, OnDestroy {
   }
 
   showStorageMenu = false;
+
   toggleStorageMenu() {
     this.showStorageMenu = !this.showStorageMenu;
   }
@@ -145,26 +151,26 @@ export class Home implements OnInit, OnDestroy {
 
   logout() {
     localStorage.removeItem('currentUser');
+
     this.currentUser = {
-<<<<<<< HEAD
       fullName: 'Khách truy cập',
-      email: 'Chưa đăng nhập'
-=======
-      name: 'Khách truy cập',
       email: ''
->>>>>>> thach
     };
+
     this.currentSection = 'home';
     this.showProfileMenu = false;
     this.router.navigate(['/login']);
   }
 
   currentSection = 'home';
+
   openSection(section: string) {
     this.currentSection = section;
+
     if (section === 'starred') {
       this.loadFavoriteSearchFiles();
     }
+
     this.showStorageMenu = false;
   }
 
@@ -210,12 +216,16 @@ export class Home implements OnInit, OnDestroy {
     const saved = JSON.parse(localStorage.getItem('favoriteSearchFiles') || '[]');
     const favorites = Array.isArray(saved) ? saved : [];
     const filtered = favorites.filter((item: any) => item.name !== file.name);
+
     localStorage.setItem('favoriteSearchFiles', JSON.stringify(filtered));
     this.favoriteSearchFiles = filtered;
   }
 
   get favoriteDocuments() {
-    return [...this.uploadedDocuments.filter(item => item.favorite), ...this.favoriteSearchFiles];
+    return [
+      ...this.uploadedDocuments.filter(item => item.favorite),
+      ...this.favoriteSearchFiles
+    ];
   }
 
   toggleFavorite(upload: any) {
@@ -223,6 +233,7 @@ export class Home implements OnInit, OnDestroy {
       const saved = JSON.parse(localStorage.getItem('uploads') || '[]');
       const uploads = Array.isArray(saved) ? saved : [];
       const idx = uploads.findIndex((u: any) => u.uploadedAt === upload.uploadedAt);
+
       if (idx === -1) return;
 
       uploads[idx] = {
@@ -232,9 +243,11 @@ export class Home implements OnInit, OnDestroy {
 
       localStorage.setItem('uploads', JSON.stringify(uploads));
       this.uploadedDocuments = uploads;
+
       if (!uploads[idx].favorite && this.currentSection === 'starred') {
         this.selectedUpload = null;
       }
+
       return;
     }
 
@@ -242,6 +255,7 @@ export class Home implements OnInit, OnDestroy {
       const saved = JSON.parse(localStorage.getItem('favoriteSearchFiles') || '[]');
       const favorites = Array.isArray(saved) ? saved : [];
       const filtered = favorites.filter((item: any) => item.name !== upload.name);
+
       localStorage.setItem('favoriteSearchFiles', JSON.stringify(filtered));
       this.favoriteSearchFiles = filtered;
     }
@@ -250,6 +264,7 @@ export class Home implements OnInit, OnDestroy {
   addActivityLog(message: string) {
     const savedActivityLog = JSON.parse(localStorage.getItem('activityLog') || '[]');
     const activityList = Array.isArray(savedActivityLog) ? savedActivityLog : [];
+
     const entry = {
       message,
       timestamp: new Date().toISOString()
@@ -283,27 +298,27 @@ export class Home implements OnInit, OnDestroy {
       });
     }
   }
-@HostListener('document:click', ['$event'])
-onDocumentClick(event: MouseEvent) {
 
-<<<<<<< HEAD
-  const target = event.target as HTMLElement;
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
 
-  if (!target.closest('.profile-dropdown')) {
-    this.showProfileMenu = false;
+    if (!target.closest('.profile-dropdown')) {
+      this.showProfileMenu = false;
+    }
+
+    if (!target.closest('.dropdown')) {
+      this.showStorageMenu = false;
+    }
   }
 
-  if (!target.closest('.dropdown')) {
-    this.showStorageMenu = false;
-  }
-}
-=======
   deleteUpload(uploadedAt: string) {
     if (!confirm('Bạn có chắc muốn chuyển tệp này vào Thùng rác không?')) return;
 
     const saved = JSON.parse(localStorage.getItem('uploads') || '[]');
     const uploads = Array.isArray(saved) ? saved : [];
     const idx = uploads.findIndex((u: any) => u.uploadedAt === uploadedAt);
+
     if (idx === -1) return;
 
     const [item] = uploads.splice(idx, 1);
@@ -312,51 +327,71 @@ onDocumentClick(event: MouseEvent) {
 
     localStorage.setItem('uploads', JSON.stringify(uploads));
     this.uploadedDocuments = uploads;
-    this.addActivityLog(`Đã xóa tài liệu "${item.title}" vào thùng rác`);
 
     const savedTrash = JSON.parse(localStorage.getItem('trash') || '[]');
     const trash = Array.isArray(savedTrash) ? savedTrash : [];
+
     trash.unshift(item);
     localStorage.setItem('trash', JSON.stringify(trash));
     this.deletedDocuments = trash;
 
-    if (this.selectedUpload?.uploadedAt === uploadedAt) this.selectedUpload = null;
+    this.addActivityLog(`Đã xóa tài liệu "${item.title}" vào thùng rác`);
+
+    if (this.selectedUpload?.uploadedAt === uploadedAt) {
+      this.selectedUpload = null;
+    }
+
     try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
   }
 
   restoreUpload(uploadedAt: string) {
     if (!confirm('Khôi phục tệp này về Tài liệu của tôi?')) return;
+
     const savedTrash = JSON.parse(localStorage.getItem('trash') || '[]');
     const trash = Array.isArray(savedTrash) ? savedTrash : [];
     const idx = trash.findIndex((u: any) => u.uploadedAt === uploadedAt);
+
     if (idx === -1) return;
+
     const [item] = trash.splice(idx, 1);
     delete item.deletedAt;
 
     const savedUploads = JSON.parse(localStorage.getItem('uploads') || '[]');
     const uploads = Array.isArray(savedUploads) ? savedUploads : [];
+
     uploads.unshift(item);
 
     localStorage.setItem('uploads', JSON.stringify(uploads));
     localStorage.setItem('trash', JSON.stringify(trash));
+
     this.uploadedDocuments = uploads;
     this.deletedDocuments = trash;
+
     this.addActivityLog(`Đã khôi phục tài liệu "${item.title}" từ thùng rác`);
+
     try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
   }
 
   permanentlyDelete(uploadedAt: string) {
     if (!confirm('Xóa vĩnh viễn tệp này khỏi thùng rác? Hành động không thể hoàn tác.')) return;
+
     const savedTrash = JSON.parse(localStorage.getItem('trash') || '[]');
     const trash = Array.isArray(savedTrash) ? savedTrash : [];
     const idx = trash.findIndex((u: any) => u.uploadedAt === uploadedAt);
+
     if (idx === -1) return;
+
     const [item] = trash.splice(idx, 1);
-    const filtered = trash;
-    localStorage.setItem('trash', JSON.stringify(filtered));
-    this.deletedDocuments = filtered;
+
+    localStorage.setItem('trash', JSON.stringify(trash));
+    this.deletedDocuments = trash;
+
     this.addActivityLog(`Đã xóa vĩnh viễn tài liệu "${item.title}"`);
-    if (this.selectedUpload?.uploadedAt === uploadedAt) this.selectedUpload = null;
+
+    if (this.selectedUpload?.uploadedAt === uploadedAt) {
+      this.selectedUpload = null;
+    }
+
     try { this.cdr.detectChanges(); } catch (e) { /* noop */ }
   }
 
@@ -375,6 +410,7 @@ onDocumentClick(event: MouseEvent) {
     }
 
     const JSZip = (window as any).JSZip;
+
     if (!JSZip) {
       alert('JSZip chưa được nạp. Vui lòng đảm bảo script JSZip có trong trang.');
       return;
@@ -382,8 +418,8 @@ onDocumentClick(event: MouseEvent) {
 
     try {
       const zip = new JSZip();
+
       for (const f of upload.filesData) {
-        // f.dataUrl is like: data:<mime>;base64,<base64data>
         const parts = (f.dataUrl || '').split(',');
         const base64 = parts[1] || '';
         zip.file(f.name, base64, { base64: true });
@@ -392,17 +428,18 @@ onDocumentClick(event: MouseEvent) {
       const blob = await zip.generateAsync({ type: 'blob' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
+
       a.href = url;
       a.download = (upload.folderName || upload.title || 'download') + '.zip';
+
       document.body.appendChild(a);
       a.click();
       a.remove();
+
       URL.revokeObjectURL(url);
     } catch (e) {
       console.error(e);
       alert('Lỗi khi tạo zip: ' + String(e));
     }
   }
-
->>>>>>> thach
 }

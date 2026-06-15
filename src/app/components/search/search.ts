@@ -14,8 +14,8 @@ export class SearchStateService {
 
   popularFiles = [
     {
-      name: 'Báo cáo thực tập.docx',
-      type: 'Word',
+      name: 'Báo cáo thực tập.doc',
+      type: 'DOC',
       searches: 128,
       description: 'Tài liệu mẫu về báo cáo thực tập và tổng kết quá trình thực hiện dự án.',
       icon: '📄',
@@ -30,37 +30,8 @@ export class SearchStateService {
       favorite: false
     },
     {
-      name: 'Mẫu kế hoạch dự án.xlsx',
-      type: 'Excel',
-      searches: 74,
-      description: 'Biểu mẫu lập kế hoạch, phân công công việc và theo dõi tiến độ dự án.',
-<<<<<<< HEAD
-      icon: '📊'
-    }
-  ];
-
-  setDocuments(data: DocumentItem[]) {
-    this.documents = data.map(item => ({
-      ...item,
-      category: 'file',
-      creator: 'Admin',
-      icon: this.getIcon(item.type)
-    }));
-=======
-      icon: '📊',
-      favorite: false
-    },
-    {
-      name: 'Slide thuyết trình.pptx',
-      type: 'PowerPoint',
-      searches: 63,
-      description: 'Mẫu slide trình bày báo cáo, đồ án hoặc khóa luận.',
-      icon: '📽',
-      favorite: false
-    },
-    {
-      name: 'Tài liệu yêu cầu hệ thống.docx',
-      type: 'Word',
+      name: 'Tài liệu yêu cầu hệ thống.doc',
+      type: 'DOC',
       searches: 51,
       description: 'Tài liệu mô tả yêu cầu chức năng và phi chức năng của hệ thống.',
       icon: '📄',
@@ -84,17 +55,32 @@ export class SearchStateService {
     this.loadPopularFavorites();
   }
 
+  setDocuments(data: DocumentItem[]) {
+    this.documents = data.map(item => ({
+      ...item,
+      category: 'file',
+      creator: item.owner_name || 'Admin',
+      icon: this.getIcon(item.type),
+      favorite: false
+    }));
+  }
+
   private loadPopularFavorites() {
     const saved = JSON.parse(localStorage.getItem(this.favoriteStorageKey) || '[]');
     const favorites = Array.isArray(saved) ? saved : [];
+
     this.popularFavorites = new Set(favorites);
+
     for (const file of this.popularFiles) {
       file.favorite = this.popularFavorites.has(file.name);
     }
   }
 
   private savePopularFavorites() {
-    localStorage.setItem(this.favoriteStorageKey, JSON.stringify(Array.from(this.popularFavorites)));
+    localStorage.setItem(
+      this.favoriteStorageKey,
+      JSON.stringify(Array.from(this.popularFavorites))
+    );
   }
 
   private loadSearchFavoriteFiles(): any[] {
@@ -108,8 +94,13 @@ export class SearchStateService {
 
   private addToSearchFavorites(file: any) {
     const favorites = this.loadSearchFavoriteFiles();
+
     if (!favorites.find((item: any) => item.name === file.name)) {
-      favorites.unshift({ ...file, favorite: true });
+      favorites.unshift({
+        ...file,
+        favorite: true
+      });
+
       this.saveSearchFavoriteFiles(favorites);
     }
   }
@@ -117,12 +108,15 @@ export class SearchStateService {
   private removeFromSearchFavorites(file: any) {
     const favorites = this.loadSearchFavoriteFiles();
     const filtered = favorites.filter((item: any) => item.name !== file.name);
+
     this.saveSearchFavoriteFiles(filtered);
   }
 
   toggleFavorite(file: any) {
     const nextValue = !file.favorite;
+
     file.favorite = nextValue;
+
     if (nextValue) {
       this.popularFavorites.add(file.name);
       this.addToSearchFavorites(file);
@@ -130,8 +124,8 @@ export class SearchStateService {
       this.popularFavorites.delete(file.name);
       this.removeFromSearchFavorites(file);
     }
+
     this.savePopularFavorites();
->>>>>>> thach
   }
 
   get searchResults() {
@@ -142,20 +136,18 @@ export class SearchStateService {
     }
 
     return this.documents.filter(item =>
-      item.name.toLowerCase().includes(key) ||
-      item.type.toLowerCase().includes(key) ||
-      item.description.toLowerCase().includes(key) ||
-      item.creator.toLowerCase().includes(key)
+      (item.name || '').toLowerCase().includes(key) ||
+      (item.type || '').toLowerCase().includes(key) ||
+      (item.description || '').toLowerCase().includes(key) ||
+      (item.creator || '').toLowerCase().includes(key)
     );
   }
 
   getIcon(type: string) {
-    const lowerType = type.toLowerCase();
+    const lowerType = (type || '').toLowerCase();
 
     if (lowerType.includes('pdf')) return '📕';
-    if (lowerType.includes('word')) return '📄';
-    if (lowerType.includes('excel')) return '📊';
-    if (lowerType.includes('powerpoint')) return '📽';
+    if (lowerType.includes('doc') || lowerType.includes('word')) return '📄';
 
     return '📁';
   }

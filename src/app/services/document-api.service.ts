@@ -5,8 +5,18 @@ import { Observable } from 'rxjs';
 export interface DocumentItem {
     id: number;
     name: string;
+    original_name?: string;
     type: string;
+    size?: number;
+    file_path?: string;
+    folder_id?: number;
+    owner_id?: number;
     description: string;
+    is_favorite?: boolean;
+    created_at?: string;
+    updated_at?: string;
+    folder_name?: string;
+    owner_name?: string;
 }
 
 @Injectable({
