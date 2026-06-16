@@ -1,0 +1,279 @@
+```html
+<div class="my-files-page">
+  <!-- Tài liệu của tôi -->
+  <section class="uploaded-files-section">
+    <div class="section-header">
+      <div>
+        <h2>📁 Tài liệu của tôi</h2>
+        <p>Những tài liệu bạn đã tải lên sẽ xuất hiện tại đây.</p>
+      </div>
+    </div>
+    <div class="popular-file-grid"
+         *ngIf="uploadedDocuments.length > 0; else emptyMyFiles">
+      <div class="popular-file-card"
+           *ngFor="let file of uploadedDocuments">
+        <div class="popular-file-top">
+          <div class="popular-file-icon">
+            📄
+          </div>
+          <div>
+            <h3>{{ file.title }}</h3>
+            <span>
+              {{ file.folderName ? 'Thư mục' : (file.fileType || 'Tệp tải lên') }}
+            </span>
+          </div>
+          <button class="favorite-btn"
+                  [class.favorited]="file.favorite"
+                  (click)="toggleFavorite(file)">
+            ♥
+          </button>
+        </div>
+        <p class="popular-file-desc">
+          {{ file.description }}
+        </p>
+        <div class="file-actions">
+          <button type="button"
+                  (click)="viewDetails(file)">
+            Xem chi tiết
+          </button>
+          <button type="button"
+                  (click)="deleteUpload(file.uploadedAt)">
+            Xóa
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-template #emptyMyFiles>
+      <div class="empty-note">
+        Bạn chưa có tài liệu nào.
+      </div>
+    </ng-template>
+  </section>
+  <!-- Yêu thích -->
+  <section class="uploaded-files-section">
+    <div class="section-header">
+      <div>
+        <h2>⭐ Yêu thích</h2>
+        <p>Các tài liệu đã được đánh dấu yêu thích.</p>
+      </div>
+    </div>
+    <div class="popular-file-grid"
+         *ngIf="favoriteDocuments.length > 0; else emptyFavorite">
+      <div class="popular-file-card"
+           *ngFor="let file of favoriteDocuments">
+        <div class="popular-file-top">
+          <div class="popular-file-icon">
+            ⭐
+          </div>
+          <div>
+            <h3>{{ file.title }}</h3>
+          </div>
+        </div>
+        <p class="popular-file-desc">
+          {{ file.description }}
+        </p>
+        <div class="file-actions">
+          <button type="button"
+                  (click)="viewDetails(file)">
+            Xem chi tiết
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-template #emptyFavorite>
+      <div class="empty-note">
+        Chưa có tài liệu yêu thích.
+      </div>
+    </ng-template>
+  </section>
+  <!-- Thùng rác -->
+  <section class="uploaded-files-section">
+    <div class="section-header">
+      <div>
+        <h2>🗑️ Thùng rác</h2>
+        <p>Các tài liệu đã bị xóa.</p>
+      </div>
+    </div>
+    <div class="popular-file-grid"
+         *ngIf="deletedDocuments.length > 0; else emptyTrash">
+      <div class="popular-file-card"
+           *ngFor="let file of deletedDocuments">
+        <div class="popular-file-top">
+          <div class="popular-file-icon">
+            🗑️
+          </div>
+          <div>
+            <h3>{{ file.title }}</h3>
+          </div>
+        </div>
+        <p class="popular-file-desc">
+          {{ file.description }}
+        </p>
+        <div class="file-actions">
+          <button type="button"
+                  (click)="restoreUpload(file.uploadedAt)">
+            Khôi phục
+          </button>
+          <button type="button"
+                  (click)="permanentlyDelete(file.uploadedAt)">
+            Xóa vĩnh viễn
+          </button>
+          <button type="button"
+                  (click)="viewDetails(file)">
+            Xem chi tiết
+          </button>
+        </div>
+      </div>
+    </div>
+    <ng-template #emptyTrash>
+      <div class="empty-note">
+        Thùng rác trống.
+      </div>
+    </ng-template>
+  </section>
+  <!-- Chi tiết tài liệu -->
+  <section class="detail-modal"
+           *ngIf="selectedUpload">
+    <div class="modal-backdrop"
+         (click)="closeDetails()">
+    </div>
+    <div class="modal-panel">
+      <div class="modal-header">
+        <div>
+          <h3>
+            {{ selectedUpload.title }}
+          </h3>
+          <p>
+            {{ selectedUpload.description }}
+          </p>
+        </div>
+        <button class="close-modal"
+                (click)="closeDetails()">
+          ✕
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-row">
+          <span>Loại:</span>
+          <strong>
+            {{ selectedUpload.isFolder ? 'Thư mục' : (selectedUpload.fileType || 'Tệp') }}
+          </strong>
+        </div>
+        <div class="detail-row"
+             *ngIf="selectedUpload.fileName">
+             <div
+  class="preview-section"
+  *ngIf="selectedUpload.previewText">
+
+  <h4>Nội dung</h4>
+
+  <pre>
+{{ selectedUpload.previewText }}
+  </pre>
+
+</div>
+
+<div
+  class="preview-section"
+  *ngIf="selectedUpload.previewData">
+
+  <img
+    [src]="selectedUpload.previewData"
+    style="max-width:100%">
+</div>
+          <span>Tên tệp:</span>
+          <strong>
+            {{ selectedUpload.fileName }}
+          </strong>
+        </div>
+        <div class="detail-row"
+             *ngIf="selectedUpload.fileSizeKB">
+          <span>Kích thước:</span>
+          <strong>
+            {{ selectedUpload.fileSizeKB }} KB
+          </strong>
+        </div>
+<div class="download-action"
+     *ngIf="selectedUpload.fileDataUrl">
+
+  <a [href]="selectedUpload.fileDataUrl"
+     [attr.download]="selectedUpload.fileName"
+     class="download-button">
+
+    ⬇️ Tải xuống
+
+  </a>
+
+</div>
+
+<!-- Nội dung xem trước -->
+<div class="preview-section"
+     *ngIf="selectedUpload.previewText">
+
+  <h4>Nội dung</h4>
+
+  <pre>
+{{ selectedUpload.previewText }}
+  </pre>
+
+</div>
+
+<!-- Xem trước ảnh -->
+<div class="preview-section"
+     *ngIf="selectedUpload.previewData">
+
+  <img
+    [src]="selectedUpload.previewData"
+    alt="Preview">
+</div>
+        <div class="folder-actions"
+             *ngIf="selectedUpload.isFolder">
+          <button type="button"
+                  (click)="downloadFolder(selectedUpload)">
+            ⬇️ Tải xuống thư mục
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+```
+```html
+<!-- Nhật ký hoạt động -->
+<section class="uploaded-files-section">
+  <div class="section-header">
+    <div>
+      <h2>📜 Nhật kí hoạt động</h2>
+      <p>
+        Lịch sử các thao tác với tài liệu.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="clear-log"
+      (click)="clearActivityLog()"
+      [disabled]="!activityLog.length">
+      Xóa nhật ký
+    </button>
+  </div>
+  <div
+    class="activity-log-list"
+    *ngIf="activityLog.length > 0; else noActivity">
+    <div
+      class="activity-log-item"
+      *ngFor="let entry of activityLog">
+      <div class="activity-log-message">
+        {{ entry.message }}
+      </div>
+      <div class="activity-log-time">
+        {{ entry.timestamp | date:'short' }}
+      </div>
+    </div>
+  </div>
+  <ng-template #noActivity>
+    <div class="empty-note">
+      Chưa có hoạt động nào.
+    </div>
+  </ng-template>
+</section>
+```

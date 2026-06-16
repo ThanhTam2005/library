@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { Search } from '../../components/search/search';
-
+import * as mammoth from 'mammoth';
 @Component({
   selector: 'app-upload',
   standalone: true,
@@ -151,6 +151,7 @@ logout() {
       uploadItem.fileExtension = this.selectedFilePreview?.fileExtension;
       if (this.selectedFilePreview?.fileDataUrl) {
         uploadItem.fileDataUrl = this.selectedFilePreview.fileDataUrl;
+        
       }
       if (this.selectedFilePreview?.previewData) {
         uploadItem.previewData = this.selectedFilePreview.previewData;
@@ -211,31 +212,86 @@ logout() {
     this.router.navigate(['/home']);
   }
 
-  private prepareFilePreview(file: File) {
-    const fileType = file.type || 'unknown';
-    const fileName = file.name;
-    const fileSizeKB = Math.round(file.size / 1024);
-    const fileExtension = file.name.split('.').pop()?.toLowerCase() || '';
-    const maxInlineSize = 2 * 1024 * 1024; // 2 MB
-    const shouldStoreDataUrl = file.size <= maxInlineSize;
-    const dataUrlPromise = shouldStoreDataUrl ? this.readFileAsDataURL(file) : Promise.resolve('');
-    const previewData = fileType.startsWith('image/') ? dataUrlPromise : Promise.resolve('');
-    const textTypes = ['txt', 'md', 'json', 'csv', 'xml', 'html'];
-    const previewText = fileType.startsWith('text/') || textTypes.includes(fileExtension)
-      ? this.readFileAsText(file)
-      : Promise.resolve('');
+private async prepareFilePreview(file: File) {
 
-    return Promise.all([dataUrlPromise, previewData, previewText]).then(([dataUrl, image, text]) => ({
-      fileType,
-      fileName,
-      fileSizeKB,
-      fileExtension,
-      fileDataUrl: dataUrl || undefined,
-      previewData: image || undefined,
-      previewText: text ? text.toString().slice(0, 12000) : undefined,
-      tooLarge: !shouldStoreDataUrl,
-    }));
+  const fileType = file.type || 'unknown';
+  const fileName = file.name;
+  const fileSizeKB = Math.round(file.size / 1024);
+  const fileExtension =
+    file.name.split('.').pop()?.toLowerCase() || '';
+
+  const maxInlineSize = 2 * 1024 * 1024;
+
+  const shouldStoreDataUrl = file.size <= maxInlineSize;
+
+  const fileDataUrl = shouldStoreDataUrl
+    ? await this.readFileAsDataURL(file)
+    : '';
+
+  let previewData = '';
+  let previewText = '';
+
+  // Ảnh
+  if (fileType.startsWith('image/')) {
+
+    previewData = fileDataUrl;
+
   }
+
+  // txt, json, csv,...
+  else if (
+    fileType.startsWith('text/') ||
+    ['txt', 'md', 'json', 'csv', 'xml', 'html']
+      .includes(fileExtension)
+  ) {
+
+    previewText = await this.readFileAsText(file);
+
+  }
+
+  // Word .docx
+  else if (fileExtension === 'docx') {
+
+    try {
+
+      const arrayBuffer = await file.arrayBuffer();
+
+      const result = await mammoth.extractRawText({
+        arrayBuffer
+      });
+
+      previewText = result.value;
+
+    }
+    catch {
+
+      previewText = '';
+
+    }
+
+  }
+
+  return {
+
+    fileType,
+    fileName,
+    fileSizeKB,
+    fileExtension,
+
+    fileDataUrl: fileDataUrl || undefined,
+
+    previewData: previewData || undefined,
+
+    previewText:
+      previewText
+        ? previewText.slice(0, 12000)
+        : undefined,
+
+    tooLarge: !shouldStoreDataUrl
+
+  };
+
+}
 
   private readFileAsDataURL(file: File) {
     return new Promise<string>((resolve) => {

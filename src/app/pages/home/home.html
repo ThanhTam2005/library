@@ -389,7 +389,7 @@
             </span>
 
             <div class="file-actions">
-              <button type="button" (click)="toggleFavorite(file)">Gỡ yêu thích</button>
+             
               <button type="button" *ngIf="file.uploadedAt" (click)="deleteUpload(file.uploadedAt)">Xóa</button>
               <button type="button" (click)="viewDetails(file)">Xem chi tiết</button>
             </div>
