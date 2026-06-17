@@ -2,26 +2,27 @@ const sql = require('mssql/msnodesqlv8');
 require('dotenv').config();
 
 const config = {
-    connectionString:
-        'Driver={ODBC Driver 17 for SQL Server};' +
-        'Server=localhost;' +
-        'Database=document_storage;' +
-        'Trusted_Connection=Yes;' +
-        'TrustServerCertificate=Yes;'
+  connectionString:
+    'Driver={ODBC Driver 17 for SQL Server};' +
+    'Server=.\\THANG;' +
+    'Database=document_storage;' +
+    'Trusted_Connection=Yes;' +
+    'TrustServerCertificate=Yes;' +
+    'Connection Timeout=5;'
 };
 
 async function connectDB() {
-    try {
-        const pool = await sql.connect(config);
-        console.log('Kết nối SQL Server thành công');
-        return pool;
-    } catch (error) {
-        console.error('Lỗi kết nối SQL Server:', error);
-        throw error;
-    }
+  try {
+    console.log('Đang kết nối SQL Server...');
+
+    const pool = await sql.connect(config);
+
+    console.log('Kết nối SQL Server thành công');
+    return pool;
+  } catch (error) {
+    console.error('Lỗi kết nối SQL Server:', error);
+    throw error;
+  }
 }
 
-module.exports = {
-    sql,
-    connectDB
-};
+module.exports = { sql, connectDB };

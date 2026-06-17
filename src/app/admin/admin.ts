@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
@@ -33,7 +34,10 @@ export class AdminComponent implements OnInit {
   // SEARCH
   searchText: string = '';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+  private http: HttpClient,
+  private router: Router
+) { }
 
   ngOnInit() {
     const savedDocs = localStorage.getItem('documents');
@@ -89,12 +93,12 @@ export class AdminComponent implements OnInit {
     );
   }
 
-  // 📂 chọn file
+  //  chọn file
   onFileSelected(event: any) {
     this.selectedFile = event.target.files[0];
   }
 
-  // ➕ thêm tài liệu
+  //  thêm tài liệu
   addDocument() {
 
     if (
@@ -119,7 +123,7 @@ export class AdminComponent implements OnInit {
     alert('Thêm tài liệu thành công!');
   }
 
-  // ✏️ sửa
+  //  sửa
   editDocument(index: number) {
     this.editIndex = index;
 
@@ -133,7 +137,7 @@ export class AdminComponent implements OnInit {
     this.selectedFile = null;
   }
 
-  // 🔄 cập nhật
+  //  cập nhật
   updateDocument() {
 
     const doc = this.filteredDocuments[this.editIndex];
@@ -154,7 +158,7 @@ export class AdminComponent implements OnInit {
     alert('Cập nhật thành công!');
   }
 
-  // 🗑 xoá
+  // xoá
   deleteDocument(index: number) {
 
     if (!confirm('Bạn có chắc muốn xóa tài liệu?')) return;
@@ -171,7 +175,7 @@ export class AdminComponent implements OnInit {
     alert('Xóa thành công!');
   }
 
-  // 🔄 reset form
+  //  reset form
   resetForm() {
     this.newDoc = {
       title: '',
@@ -181,7 +185,7 @@ export class AdminComponent implements OnInit {
     this.selectedFile = null;
   }
 
-  // 🔍 search
+  //  search
   filterDocuments() {
 
     const keyword = this.searchText.toLowerCase().trim();
@@ -192,4 +196,13 @@ export class AdminComponent implements OnInit {
       doc.author.toLowerCase().includes(keyword)
     );
   }
+  logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('role');
+
+  alert('Đăng xuất thành công!');
+
+  this.router.navigate(['/login']);
+}
 }

@@ -19,7 +19,7 @@ export class LoginComponent {
 
   admin = {
     email: 'admin@gmail.com',
-    password: '123456'
+    password: 'admin123'
   };
 
   showPassword = false;
