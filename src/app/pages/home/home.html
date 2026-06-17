@@ -68,25 +68,25 @@
         <hr>
 
         <button class="profile-action" type="button" (click)="toggleActivityLog()">
-          📋 Nhật ký hoạt động
+           Nhật ký hoạt động
         </button>
 
         <button class="profile-action" type="button" (click)="openSection('starred')">
-          ⭐ Tài liệu yêu thích
+           Tài liệu yêu thích
         </button>
 
         <button class="profile-action" type="button">
-          ⚙️ Cài đặt tài khoản
+           Cài đặt tài khoản
         </button>
 
         <hr>
 
         <button class="logout-link" type="button" *ngIf="isLoggedIn()" (click)="logout()">
-          🚪 Đăng xuất
+           Đăng xuất
         </button>
 
         <button class="logout-link" type="button" *ngIf="!isLoggedIn()" (click)="goLogin()">
-          🚪 Đăng nhập
+           Đăng nhập
         </button>
 
       </div>
@@ -113,7 +113,7 @@
       <div class="activity-log-modal">
         <div class="section-header activity-log-header">
           <div>
-            <h2>📜 Nhật kí hoạt động</h2>
+            <h2> Nhật kí hoạt động</h2>
             <p>Ghi lại hành động upload, xóa, khôi phục và đăng ký tài khoản.</p>
             <span class="activity-log-count">Tổng: {{ activityLog.length }} mục</span>
           </div>
@@ -148,7 +148,7 @@
 
       <div class="section-header">
         <div>
-          <h2>📁 Tài liệu được người dùng upload</h2>
+          <h2> Tài liệu được người dùng upload</h2>
           <p>Những tài liệu mới nhất được tải lên sẽ xuất hiện ở đây.</p>
         </div>
       </div>
@@ -178,7 +178,7 @@
 
           <div class="popular-file-bottom">
             <span>
-              📎
+              
               <ng-container *ngIf="file.isFolder; else singleFileInfoHome">
                 {{ file.fileCount }} tệp trong thư mục
               </ng-container>
@@ -203,7 +203,7 @@
 
       <div class="section-header">
         <div>
-          <h2>📁 Tài liệu của tôi</h2>
+          <h2> Tài liệu của tôi</h2>
           <p>Những tài liệu bạn đã tải lên sẽ xuất hiện tại đây.</p>
         </div>
       </div>
@@ -233,7 +233,7 @@
 
           <div class="popular-file-bottom">
             <span>
-              📎
+              
               <ng-container *ngIf="file.isFolder; else singleFileInfo">
                 {{ file.fileCount }} tệp trong thư mục
               </ng-container>
@@ -261,7 +261,7 @@
     <section class="uploaded-files-section" *ngIf="currentSection === 'shared-with-me'">
       <div class="section-header">
         <div>
-          <h2>🤝 Được chia sẻ với tôi</h2>
+          <h2> Được chia sẻ với tôi</h2>
           <p>Các tài liệu người khác chia sẻ cho bạn sẽ hiển thị tại đây.</p>
         </div>
       </div>
@@ -273,7 +273,7 @@
     <section class="uploaded-files-section" *ngIf="currentSection === 'recent'">
       <div class="section-header">
         <div>
-          <h2>🕘 Gần đây</h2>
+          <h2> Gần đây</h2>
           <p>Các tài liệu được thao tác gần đây.</p>
         </div>
       </div>
@@ -309,7 +309,7 @@
     <section class="uploaded-files-section" *ngIf="currentSection === 'trash'">
       <div class="section-header">
         <div>
-          <h2>🗑️ Thùng rác</h2>
+          <h2> Thùng rác</h2>
           <p>Các mục bạn đã xóa. Bạn có thể khôi phục hoặc xóa vĩnh viễn.</p>
         </div>
       </div>
@@ -350,7 +350,7 @@
     <section class="uploaded-files-section" *ngIf="currentSection === 'starred'">
       <div class="section-header">
         <div>
-          <h2>⭐ Yêu thích</h2>
+          <h2> Yêu thích</h2>
           <p>Những tài liệu đã được bạn đánh dấu tim sẽ hiện tại đây.</p>
         </div>
       </div>
@@ -378,7 +378,7 @@
 
           <div class="popular-file-bottom">
             <span>
-              📎
+              
               <ng-container *ngIf="file.isFolder; else singleFileInfoFavorite">
                 {{ file.fileCount }} tệp trong thư mục
               </ng-container>
@@ -459,7 +459,7 @@
           <div class="download-action" *ngIf="!selectedUpload.isFolder && selectedUpload.fileDataUrl">
             <a [href]="selectedUpload.fileDataUrl" [attr.download]="selectedUpload.fileName" target="_blank"
               rel="noopener" class="download-button">
-              ⬇️ Tải xuống tệp này
+               Tải xuống tệp này
             </a>
           </div>
 
@@ -497,7 +497,7 @@
             <div class="folder-actions">
               <button type="button" (click)="downloadFolder(selectedUpload)"
                 [disabled]="!selectedUpload.filesData || selectedUpload.filesData.length === 0">
-                ⬇️ Tải xuống thư mục
+                 Tải xuống thư mục
               </button>
             </div>
 
