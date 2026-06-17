@@ -164,19 +164,14 @@
              <div
   class="preview-section"
   *ngIf="selectedUpload.previewText">
-
   <h4>Nội dung</h4>
-
   <pre>
 {{ selectedUpload.previewText }}
   </pre>
-
 </div>
-
 <div
   class="preview-section"
   *ngIf="selectedUpload.previewData">
-
   <img
     [src]="selectedUpload.previewData"
     style="max-width:100%">
@@ -201,27 +196,19 @@
      class="download-button">
 
     ⬇️ Tải xuống
-
   </a>
-
 </div>
-
 <!-- Nội dung xem trước -->
 <div class="preview-section"
      *ngIf="selectedUpload.previewText">
-
   <h4>Nội dung</h4>
-
   <pre>
 {{ selectedUpload.previewText }}
   </pre>
-
 </div>
-
 <!-- Xem trước ảnh -->
 <div class="preview-section"
      *ngIf="selectedUpload.previewData">
-
   <img
     [src]="selectedUpload.previewData"
     alt="Preview">

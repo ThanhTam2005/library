@@ -1,30 +1,32 @@
+```html
 <div class="home-page">
 
-  <!-- Thanh công cụ trên cùng -->
+  <!-- Thanh công cụ -->
   <header class="navbar">
 
     <div class="navbar-left">
-      <div class="logo">Document Storage</div>
+
+      <div class="logo">
+        Document Storage
+      </div>
 
       <nav class="menu">
-        <a type="button" (click)="openSection('home')">Trang chủ</a>
 
-        <div class="dropdown">
-          <button class="drop-btn" type="button" (click)="toggleStorageMenu()">
-            Kho lưu trữ ▾
-          </button>
+        <a type="button"
+           (click)="openSection('home')">
+          Trang chủ
+        </a>
 
-          <div class="dropdown-menu" [class.show]="showStorageMenu">
-            <a (click)="goToProtectedSection('my-files')">Tài liệu của tôi</a>
-            <a (click)="goToProtectedSection('shared-with-me')">Được chia sẻ với tôi</a>
-            <a (click)="goToProtectedSection('recent')">Gần đây</a>
-            <a (click)="goToProtectedSection('starred')">Yêu thích</a>
-            <a (click)="goToProtectedSection('trash')">Thùng rác</a>
-          </div>
-        </div>
+        <a (click)="goToProtectedPage('my-files')">
+          Tài liệu của tôi
+        </a>
 
-        <a (click)="goToProtectedPage('upload')">Upload</a>
+        <a (click)="goToProtectedPage('upload')">
+          Upload
+        </a>
+
       </nav>
+
     </div>
 
     <div class="top-search">
@@ -34,25 +36,43 @@
     <!-- Tài khoản -->
     <div class="profile-dropdown">
 
-      <button class="profile-btn" type="button" (click)="toggleProfileMenu(); $event.stopPropagation()">
+      <button
+        class="profile-btn"
+        type="button"
+        (click)="toggleProfileMenu(); $event.stopPropagation()">
 
         <span class="hamburger-icon">☰</span>
-        <span *ngIf="isLoggedIn(); else loginLabel">Tài khoản cá nhân</span>
+
+        <span *ngIf="isLoggedIn(); else loginLabel">
+          Tài khoản cá nhân
+        </span>
+
         <ng-template #loginLabel>
           <span>Đăng nhập</span>
         </ng-template>
+
         <span>▾</span>
+
       </button>
 
-      <div class="profile-menu" [class.show]="showProfileMenu">
+      <div class="profile-menu"
+           [class.show]="showProfileMenu">
 
         <div class="profile-header">
-          <div class="avatar">👤</div>
-          <h4>Tài khoản của tôi</h4>
+
+          <div class="avatar">
+            👤
+          </div>
+
+          <h4>
+            Tài khoản của tôi
+          </h4>
+
         </div>
 
         <div class="profile-item">
           <span class="label">Tên</span>
+
           <span class="value">
             {{ currentUser.fullName || 'Người dùng' }}
           </span>
@@ -60,6 +80,7 @@
 
         <div class="profile-item">
           <span class="label">Email</span>
+
           <span class="value">
             {{ currentUser.email || 'Chưa có email' }}
           </span>
@@ -67,26 +88,32 @@
 
         <hr>
 
-        <button class="profile-action" type="button" (click)="toggleActivityLog()">
-          📋 Nhật ký hoạt động
-        </button>
-
-        <button class="profile-action" type="button" (click)="openSection('starred')">
-          ⭐ Tài liệu yêu thích
-        </button>
-
-        <button class="profile-action" type="button">
+        <button
+          class="profile-action"
+          type="button">
           ⚙️ Cài đặt tài khoản
         </button>
 
         <hr>
 
-        <button class="logout-link" type="button" *ngIf="isLoggedIn()" (click)="logout()">
+        <button
+          class="logout-link"
+          type="button"
+          *ngIf="isLoggedIn()"
+          (click)="logout()">
+
           🚪 Đăng xuất
+
         </button>
 
-        <button class="logout-link" type="button" *ngIf="!isLoggedIn()" (click)="goLogin()">
+        <button
+          class="logout-link"
+          type="button"
+          *ngIf="!isLoggedIn()"
+          (click)="goLogin()">
+
           🚪 Đăng nhập
+
         </button>
 
       </div>
@@ -95,421 +122,26 @@
 
   </header>
 
-  <!-- Nội dung chính -->
+  <!-- Nội dung -->
   <main class="main-content">
 
-    <!-- Trang chủ -->
-    <section class="hero" *ngIf="currentSection === 'home'">
-      <h1>Quản lý kho lưu trữ tài liệu</h1>
-      <p>Tìm kiếm, tải lên, chia sẻ và quản lý tài liệu cá nhân trên hệ thống.</p>
+    <section
+      class="hero"
+      *ngIf="currentSection === 'home'">
+
+      <h1>
+        Quản lý kho lưu trữ tài liệu
+      </h1>
+
+      <p>
+        Tìm kiếm, tải lên, chia sẻ và quản lý tài liệu cá nhân trên hệ thống.
+      </p>
 
       <app-search mode="main"></app-search>
-    </section>
 
-    <!-- Nhật ký hoạt động -->
-    <div class="activity-log-overlay" *ngIf="activityLogVisible">
-      <div class="activity-log-backdrop" (click)="closeActivityLog()"></div>
-
-      <div class="activity-log-modal">
-        <div class="section-header activity-log-header">
-          <div>
-            <h2>📜 Nhật kí hoạt động</h2>
-            <p>Ghi lại hành động upload, xóa, khôi phục và đăng ký tài khoản.</p>
-            <span class="activity-log-count">Tổng: {{ activityLog.length }} mục</span>
-          </div>
-
-          <div class="activity-log-buttons">
-            <button class="clear-log" type="button" (click)="clearActivityLog()" [disabled]="!activityLog.length">
-              Xóa nhật ký
-            </button>
-
-            <button class="close-log" type="button" (click)="closeActivityLog()">
-              Đóng
-            </button>
-          </div>
-        </div>
-
-        <div class="activity-log-list" *ngIf="activityLog.length; else noActivity">
-          <div class="activity-log-item" *ngFor="let entry of activityLog">
-            <div class="activity-log-message">{{ entry.message }}</div>
-            <div class="activity-log-time">{{ entry.timestamp | date:'short' }}</div>
-          </div>
-        </div>
-
-        <ng-template #noActivity>
-          <div class="empty-note">Chưa có hoạt động nào.</div>
-        </ng-template>
-      </div>
-    </div>
-
-    <!-- Tài liệu được upload ở trang chủ -->
-    <section class="uploaded-files-section"
-      *ngIf="currentSection === 'home' && uploadedDocuments && uploadedDocuments.length > 0">
-
-      <div class="section-header">
-        <div>
-          <h2>📁 Tài liệu được người dùng upload</h2>
-          <p>Những tài liệu mới nhất được tải lên sẽ xuất hiện ở đây.</p>
-        </div>
-      </div>
-
-      <div class="popular-file-grid">
-        <div class="popular-file-card" *ngFor="let file of uploadedDocuments">
-
-          <div class="popular-file-top">
-            <div class="popular-file-icon">📄</div>
-
-            <div>
-              <h3>{{ file.title }}</h3>
-              <span>
-                {{ file.folderName ? 'Thư mục' : (file.fileType || 'Tệp tải lên') }}
-                <span *ngIf="file.folderName"> • {{ file.folderName }}</span>
-              </span>
-            </div>
-
-            <button type="button" class="favorite-btn" [class.favorited]="file.favorite" (click)="toggleFavorite(file)">
-              ♥
-            </button>
-          </div>
-
-          <p class="popular-file-desc">
-            {{ file.description }}
-          </p>
-
-          <div class="popular-file-bottom">
-            <span>
-              📎
-              <ng-container *ngIf="file.isFolder; else singleFileInfoHome">
-                {{ file.fileCount }} tệp trong thư mục
-              </ng-container>
-
-              <ng-template #singleFileInfoHome>
-                {{ file.fileName || 'Không xác định' }} • {{ file.fileSizeKB || 0 }} KB
-              </ng-template>
-            </span>
-
-            <div class="file-actions">
-              <button type="button" (click)="deleteUpload(file.uploadedAt)">Xóa</button>
-              <button type="button" (click)="viewDetails(file)">Xem chi tiết</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- Tài liệu của tôi -->
-    <section class="uploaded-files-section" *ngIf="currentSection === 'my-files'">
-
-      <div class="section-header">
-        <div>
-          <h2>📁 Tài liệu của tôi</h2>
-          <p>Những tài liệu bạn đã tải lên sẽ xuất hiện tại đây.</p>
-        </div>
-      </div>
-
-      <div class="popular-file-grid" *ngIf="uploadedDocuments && uploadedDocuments.length > 0; else emptyMyFiles">
-        <div class="popular-file-card" *ngFor="let file of uploadedDocuments">
-
-          <div class="popular-file-top">
-            <div class="popular-file-icon">📄</div>
-
-            <div>
-              <h3>{{ file.title }}</h3>
-              <span>
-                {{ file.folderName ? 'Thư mục' : (file.fileType || 'Tệp tải lên') }}
-                <span *ngIf="file.folderName"> • {{ file.folderName }}</span>
-              </span>
-            </div>
-
-            <button type="button" class="favorite-btn" [class.favorited]="file.favorite" (click)="toggleFavorite(file)">
-              ♥
-            </button>
-          </div>
-
-          <p class="popular-file-desc">
-            {{ file.description }}
-          </p>
-
-          <div class="popular-file-bottom">
-            <span>
-              📎
-              <ng-container *ngIf="file.isFolder; else singleFileInfo">
-                {{ file.fileCount }} tệp trong thư mục
-              </ng-container>
-
-              <ng-template #singleFileInfo>
-                {{ file.fileName || 'Không xác định' }} • {{ file.fileSizeKB || 0 }} KB
-              </ng-template>
-            </span>
-
-            <div class="file-actions">
-              <button type="button" (click)="deleteUpload(file.uploadedAt)">Xóa</button>
-              <button type="button" (click)="viewDetails(file)">Xem chi tiết</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <ng-template #emptyMyFiles>
-        <div class="empty-note">Bạn chưa có tài liệu nào.</div>
-      </ng-template>
-    </section>
-
-    <!-- Được chia sẻ với tôi -->
-    <section class="uploaded-files-section" *ngIf="currentSection === 'shared-with-me'">
-      <div class="section-header">
-        <div>
-          <h2>🤝 Được chia sẻ với tôi</h2>
-          <p>Các tài liệu người khác chia sẻ cho bạn sẽ hiển thị tại đây.</p>
-        </div>
-      </div>
-
-      <div class="empty-note">Chưa có tài liệu nào được chia sẻ.</div>
-    </section>
-
-    <!-- Gần đây -->
-    <section class="uploaded-files-section" *ngIf="currentSection === 'recent'">
-      <div class="section-header">
-        <div>
-          <h2>🕘 Gần đây</h2>
-          <p>Các tài liệu được thao tác gần đây.</p>
-        </div>
-      </div>
-
-      <div class="popular-file-grid" *ngIf="uploadedDocuments && uploadedDocuments.length > 0; else emptyRecent">
-        <div class="popular-file-card" *ngFor="let file of uploadedDocuments">
-          <div class="popular-file-top">
-            <div class="popular-file-icon">📄</div>
-
-            <div>
-              <h3>{{ file.title }}</h3>
-              <span>{{ file.fileName || file.folderName || 'Tài liệu' }}</span>
-            </div>
-          </div>
-
-          <p class="popular-file-desc">{{ file.description }}</p>
-
-          <div class="popular-file-bottom">
-            <span>{{ file.uploadedAt | date:'short' }}</span>
-            <div class="file-actions">
-              <button type="button" (click)="viewDetails(file)">Xem chi tiết</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <ng-template #emptyRecent>
-        <div class="empty-note">Chưa có tài liệu gần đây.</div>
-      </ng-template>
-    </section>
-
-    <!-- Thùng rác -->
-    <section class="uploaded-files-section" *ngIf="currentSection === 'trash'">
-      <div class="section-header">
-        <div>
-          <h2>🗑️ Thùng rác</h2>
-          <p>Các mục bạn đã xóa. Bạn có thể khôi phục hoặc xóa vĩnh viễn.</p>
-        </div>
-      </div>
-
-      <div class="popular-file-grid" *ngIf="deletedDocuments && deletedDocuments.length; else emptyTrash">
-        <div class="popular-file-card" *ngFor="let file of deletedDocuments">
-
-          <div class="popular-file-top">
-            <div class="popular-file-icon">🗑️</div>
-
-            <div>
-              <h3>{{ file.title }}</h3>
-              <span>{{ file.folderName ? 'Thư mục' : (file.fileType || 'Tệp tải lên') }}</span>
-            </div>
-          </div>
-
-          <p class="popular-file-desc">{{ file.description }}</p>
-
-          <div class="popular-file-bottom">
-            <span>{{ file.fileName || (file.fileCount + ' tệp') }}</span>
-
-            <div class="file-actions">
-              <button type="button" (click)="restoreUpload(file.uploadedAt)">Khôi phục</button>
-              <button type="button" (click)="permanentlyDelete(file.uploadedAt)">Xóa vĩnh viễn</button>
-              <button type="button" (click)="viewDetails(file)">Xem chi tiết</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <ng-template #emptyTrash>
-        <div class="empty-note">Thùng rác trống.</div>
-      </ng-template>
-    </section>
-
-    <!-- Yêu thích -->
-    <section class="uploaded-files-section" *ngIf="currentSection === 'starred'">
-      <div class="section-header">
-        <div>
-          <h2>⭐ Yêu thích</h2>
-          <p>Những tài liệu đã được bạn đánh dấu tim sẽ hiện tại đây.</p>
-        </div>
-      </div>
-
-      <div class="popular-file-grid" *ngIf="favoriteDocuments.length; else emptyFavorites">
-        <div class="popular-file-card" *ngFor="let file of favoriteDocuments">
-
-          <div class="popular-file-top">
-            <div class="popular-file-icon">📄</div>
-
-            <div>
-              <h3>{{ file.title || file.name }}</h3>
-              <span>
-                {{ file.folderName ? 'Thư mục' : (file.fileType || file.type || 'Tệp tải lên') }}
-                <span *ngIf="file.folderName"> • {{ file.folderName }}</span>
-              </span>
-            </div>
-
-            <button type="button" class="favorite-btn favorited" (click)="toggleFavorite(file)">
-              ♥
-            </button>
-          </div>
-
-          <p class="popular-file-desc">{{ file.description }}</p>
-
-          <div class="popular-file-bottom">
-            <span>
-              📎
-              <ng-container *ngIf="file.isFolder; else singleFileInfoFavorite">
-                {{ file.fileCount }} tệp trong thư mục
-              </ng-container>
-
-              <ng-template #singleFileInfoFavorite>
-                {{ file.fileName || 'Không xác định' }} • {{ file.fileSizeKB || 0 }} KB
-              </ng-template>
-            </span>
-
-            <div class="file-actions">
-             
-              <button type="button" *ngIf="file.uploadedAt" (click)="deleteUpload(file.uploadedAt)">Xóa</button>
-              <button type="button" (click)="viewDetails(file)">Xem chi tiết</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <ng-template #emptyFavorites>
-        <div class="empty-note">Chưa có mục yêu thích nào.</div>
-      </ng-template>
-    </section>
-
-    <!-- Chi tiết tài liệu -->
-    <section class="detail-modal" *ngIf="selectedUpload">
-      <div class="modal-backdrop" (click)="closeDetails()"></div>
-
-      <div class="modal-panel">
-        <div class="modal-header">
-          <div>
-            <h3>{{ selectedUpload.title }}</h3>
-            <p>{{ selectedUpload.description }}</p>
-          </div>
-
-          <button type="button" class="close-modal" (click)="closeDetails()">✕</button>
-        </div>
-
-        <div class="modal-body">
-
-          <div class="detail-row">
-            <span>Loại:</span>
-            <strong>
-              {{ selectedUpload.isFolder ? 'Thư mục' : (selectedUpload.fileType || 'Tệp tải lên') }}
-            </strong>
-          </div>
-
-          <div class="detail-row" *ngIf="selectedUpload.isFolder">
-            <span>Tên thư mục:</span>
-            <strong>{{ selectedUpload.folderName || 'Không xác định' }}</strong>
-          </div>
-
-          <div class="detail-row" *ngIf="!selectedUpload.isFolder">
-            <span>Tên tệp:</span>
-            <strong>{{ selectedUpload.fileName }}</strong>
-          </div>
-
-          <div class="detail-row" *ngIf="!selectedUpload.isFolder">
-            <span>Kích thước:</span>
-            <strong>{{ selectedUpload.fileSizeKB }} KB</strong>
-          </div>
-
-          <div class="detail-row" *ngIf="selectedUpload.fileCount">
-            <span>Số lượng tệp:</span>
-            <strong>{{ selectedUpload.fileCount }}</strong>
-          </div>
-
-          <div class="preview-section" *ngIf="selectedUpload.previewData">
-            <h4>Ảnh xem trước</h4>
-            <img [src]="selectedUpload.previewData" alt="File preview" />
-          </div>
-
-          <div class="preview-section" *ngIf="selectedUpload.previewText">
-            <h4>Nội dung xem trước</h4>
-            <pre>{{ selectedUpload.previewText }}</pre>
-          </div>
-
-          <div class="download-action" *ngIf="!selectedUpload.isFolder && selectedUpload.fileDataUrl">
-            <a [href]="selectedUpload.fileDataUrl" [attr.download]="selectedUpload.fileName" target="_blank"
-              rel="noopener" class="download-button">
-              ⬇️ Tải xuống tệp này
-            </a>
-          </div>
-
-          <div class="no-preview"
-            *ngIf="!selectedUpload.isFolder && !selectedUpload.previewData && !selectedUpload.previewText">
-
-            <p>Không thể xem trực tiếp với định dạng này.</p>
-            <p *ngIf="selectedUpload.fileDataUrl">
-              Bạn có thể tải xuống và mở file bằng ứng dụng tương thích.
-            </p>
-            <p *ngIf="!selectedUpload.fileDataUrl">
-              Tệp quá lớn để lưu xem trước tự động, nên chỉ hiển thị metadata.
-            </p>
-          </div>
-
-          <div class="folder-files" *ngIf="selectedUpload.isFolder">
-            <h4>Danh sách tệp trong thư mục</h4>
-
-            <ul>
-              <li *ngFor="let name of selectedUpload.fileNames">{{ name }}</li>
-            </ul>
-          </div>
-
-          <div class="folder-note" *ngIf="selectedUpload.isFolder">
-            <p>Thư mục lưu metadata và danh sách tệp trong ứng dụng này.</p>
-
-            <p *ngIf="selectedUpload.filesData && selectedUpload.filesData.length">
-              Một số tệp đã được lưu để tải xuống.
-            </p>
-
-            <p *ngIf="!selectedUpload.filesData || !selectedUpload.filesData.length">
-              Không có nội dung tệp khả dụng để tải xuống.
-            </p>
-
-            <div class="folder-actions">
-              <button type="button" (click)="downloadFolder(selectedUpload)"
-                [disabled]="!selectedUpload.filesData || selectedUpload.filesData.length === 0">
-                ⬇️ Tải xuống thư mục
-              </button>
-            </div>
-
-            <p *ngIf="selectedUpload.filesTooLargeCount">
-              Có {{ selectedUpload.filesTooLargeCount }} tệp quá lớn, không được bao gồm.
-            </p>
-          </div>
-
-        </div>
-      </div>
     </section>
 
   </main>
 
 </div>
+```
