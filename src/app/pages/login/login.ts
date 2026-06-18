@@ -57,7 +57,7 @@ export class LoginComponent {
       return;
     }
 
-    // Kiểm tra admin cứng
+    // Đăng nhập Admin cứng
     if (
       this.user.email === this.admin.email &&
       this.user.password === this.admin.password
@@ -65,12 +65,13 @@ export class LoginComponent {
       alert('Đăng nhập Admin thành công!');
 
       const adminUser = {
-        name: 'Admin',
+        fullName: 'Admin',
         email: this.admin.email,
         role: 'ADMIN'
       };
 
       localStorage.setItem('currentUser', JSON.stringify(adminUser));
+
       this.router.navigate(['/admin']);
       return;
     }
@@ -86,26 +87,31 @@ export class LoginComponent {
         const savedUser = res.user;
 
         const currentUser = {
-          name: savedUser.fullName || savedUser.name || 'Người dùng',
-          email: savedUser.email,
-          role: savedUser.role
+          fullName: savedUser.fullName || 'Người dùng',
+          email: savedUser.email || '',
+          role: savedUser.role || 'USER'
         };
 
         localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
-        if (savedUser.role === 'ADMIN') {
+        if (currentUser.role === 'ADMIN') {
           this.router.navigate(['/admin']);
           return;
         }
 
         const redirect = this.route.snapshot.queryParamMap.get('redirect');
+        const section = this.route.snapshot.queryParamMap.get('section');
 
         if (redirect === 'upload') {
           this.router.navigate(['/upload']);
-        } else if (redirect) {
-          this.router.navigate(['/home'], {
-            queryParams: { section: redirect }
+        } else if (redirect === 'my-files') {
+          this.router.navigate(['/my-files'], {
+            queryParams: {
+              section: section || 'my-files'
+            }
           });
+        } else if (redirect) {
+          this.router.navigate(['/' + redirect]);
         } else {
           this.router.navigate(['/home']);
         }

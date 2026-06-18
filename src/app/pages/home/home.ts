@@ -20,15 +20,22 @@ export class Home implements OnInit {
     email: ''
   };
 
+  constructor(private router: Router) { }
+
   ngOnInit() {
     const userData = localStorage.getItem('currentUser');
 
     if (userData) {
-      this.currentUser = JSON.parse(userData);
+      try {
+        this.currentUser = JSON.parse(userData);
+      } catch {
+        this.currentUser = {
+          fullName: 'Khách truy cập',
+          email: ''
+        };
+      }
     }
   }
-
-  constructor(private router: Router) { }
 
   isLoggedIn() {
     return !!this.currentUser?.email && this.currentUser.email !== '';
@@ -47,8 +54,15 @@ export class Home implements OnInit {
     this.showStorageMenu = !this.showStorageMenu;
   }
 
+  goHome() {
+    this.router.navigate(['/home']);
+    this.showStorageMenu = false;
+    this.showProfileMenu = false;
+  }
+
   goLogin() {
     this.showProfileMenu = false;
+    this.showStorageMenu = false;
     this.router.navigate(['/login']);
   }
 
@@ -61,12 +75,9 @@ export class Home implements OnInit {
     };
 
     this.showProfileMenu = false;
-    this.router.navigate(['/login']);
-  }
-
-  goHome() {
-    this.router.navigate(['/home']);
     this.showStorageMenu = false;
+
+    this.router.navigate(['/login']);
   }
 
   goToProtectedPage(page: string) {
@@ -81,6 +92,27 @@ export class Home implements OnInit {
     }
 
     this.showStorageMenu = false;
+    this.showProfileMenu = false;
+  }
+
+  goToMyFilesSection(section: string) {
+    const currentUser = localStorage.getItem('currentUser');
+
+    if (currentUser) {
+      this.router.navigate(['/my-files'], {
+        queryParams: { section }
+      });
+    } else {
+      this.router.navigate(['/login'], {
+        queryParams: {
+          redirect: 'my-files',
+          section: section
+        }
+      });
+    }
+
+    this.showStorageMenu = false;
+    this.showProfileMenu = false;
   }
 
   @HostListener('document:click', ['$event'])

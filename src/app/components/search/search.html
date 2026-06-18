@@ -9,7 +9,9 @@
     <div class="center-search">
         <input type="text" placeholder="Tìm kiếm theo tên, từ khóa hoặc nội dung bên trong tệp" [(ngModel)]="keyword">
 
-        <button type="button">Tìm kiếm</button>
+        <button type="button">
+            Tìm kiếm
+        </button>
     </div>
 
     <section class="search-result-section">
@@ -35,23 +37,46 @@
             </div>
 
             <div class="result-grid" *ngIf="searchResults.length > 0">
+
                 <div class="result-card" *ngFor="let item of searchResults">
 
                     <div class="result-top">
-                        <div class="result-icon">{{ item.icon }}</div>
+                        <div class="result-icon">
+                            {{ item.icon || getUploadedIcon(item) }}
+                        </div>
 
                         <div>
-                            <h3>{{ item.name }}</h3>
+                            <h3>
+                                {{ item.name || item.title }}
+                            </h3>
+
                             <span>
-                                {{ item.type }} • {{ item.category === 'folder' ? 'Thư mục' : 'Tệp' }}
+                                <ng-container *ngIf="item.uploadedAt; else apiType">
+                                    {{ item.fileExtension ? item.fileExtension.toUpperCase() : 'Tệp tải lên' }}
+                                </ng-container>
+
+                                <ng-template #apiType>
+                                    {{ item.type }} • {{ item.category === 'folder' ? 'Thư mục' : 'Tệp' }}
+                                </ng-template>
                             </span>
                         </div>
                     </div>
 
-                    <p>{{ item.description }}</p>
+                    <p>
+                        {{ item.description || 'Không có mô tả.' }}
+                    </p>
 
                     <div class="result-bottom">
-                        <span>Người tạo: {{ item.creator }}</span>
+                        <span>
+                            <ng-container *ngIf="item.uploadedAt; else apiCreator">
+                                {{ item.fileName || 'Không xác định' }}
+                                <span *ngIf="item.fileSizeKB"> • {{ item.fileSizeKB }} KB</span>
+                            </ng-container>
+
+                            <ng-template #apiCreator>
+                                Người tạo: {{ item.creator }}
+                            </ng-template>
+                        </span>
 
                         <button type="button" (click)="readItem(item)">
                             {{ item.category === 'folder' ? 'Mở thư mục' : 'Đọc tệp' }}
@@ -59,6 +84,7 @@
                     </div>
 
                 </div>
+
             </div>
 
         </div>
@@ -66,43 +92,199 @@
         <!-- Khi chưa nhập từ khóa -->
         <div *ngIf="keyword.trim() === ''">
 
-            <div class="section-header">
-                <div>
-                    <h2>📌 Tài liệu được tìm kiếm nhiều</h2>
-                    <p>Những tài liệu phổ biến được nhiều người quan tâm và truy cập.</p>
+            <!-- Tài liệu được tìm kiếm nhiều -->
+            <section class="popular-files-section">
+
+                <div class="section-header">
+                    <div>
+                        <h2>📌 Tài liệu được tìm kiếm nhiều</h2>
+                        <p>Những tài liệu phổ biến được nhiều người quan tâm và truy cập.</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="popular-file-grid">
-                <div class="popular-file-card" *ngFor="let file of popularFiles">
+                <div class="popular-file-grid">
 
-                    <div class="popular-file-top">
-                        <div class="popular-file-icon">{{ file.icon }}</div>
+                    <div class="popular-file-card" *ngFor="let file of popularFiles">
 
-                        <div>
-                            <h3>{{ file.name }}</h3>
-                            <span>{{ file.type }}</span>
+                        <div class="popular-file-top">
+                            <div class="popular-file-icon">
+                                {{ file.icon }}
+                            </div>
+
+                            <div>
+                                <h3>{{ file.name }}</h3>
+                                <span>{{ file.type }}</span>
+                            </div>
+
+                            <button type="button" class="favorite-btn" [class.favorited]="file.favorite"
+                                (click)="toggleFavorite(file)">
+                                ♥
+                            </button>
                         </div>
 
-                        <button type="button" class="favorite-btn" [class.favorited]="file.favorite" (click)="toggleFavorite(file)">
-                          ♥
-                        </button>
-                    </div>
+                        <p class="popular-file-desc">
+                            {{ file.description }}
+                        </p>
 
-                    <p class="popular-file-desc">
-                        {{ file.description }}
-                    </p>
+                        <div class="popular-file-bottom">
+                            <span>🔍 {{ file.searches }} lượt tìm kiếm</span>
 
-                    <div class="popular-file-bottom">
-                        <span>🔍 {{ file.searches }} lượt tìm kiếm</span>
-                        <button type="button" (click)="readItem(file)">Đọc tệp</button>
+                            <button type="button" (click)="readItem(file)">
+                                Đọc tệp
+                            </button>
+                        </div>
+
                     </div>
 
                 </div>
-            </div>
+
+            </section>
+
+            <!-- Tài liệu vừa tải lên -->
+            <section class="uploaded-home-section" *ngIf="uploadedDocuments.length > 0">
+
+                <div class="section-header">
+                    <div>
+                        <h2>📁 Tài liệu vừa tải lên</h2>
+                        <p>Những tài liệu bạn đã upload sẽ hiển thị tại đây.</p>
+                    </div>
+
+                    <button type="button" class="clear-btn" (click)="goToMyFiles()">
+                        Xem tất cả
+                    </button>
+                </div>
+
+                <div class="popular-file-grid">
+
+                    <div class="popular-file-card" *ngFor="let file of uploadedDocuments">
+
+                        <div class="popular-file-top">
+
+                            <div class="popular-file-icon">
+                                {{ getUploadedIcon(file) }}
+                            </div>
+
+                            <div>
+                                <h3>{{ file.title }}</h3>
+
+                                <span>
+                                    {{ file.fileExtension ? file.fileExtension.toUpperCase() : 'Tệp tải lên' }}
+                                </span>
+                            </div>
+
+                            <button type="button" class="favorite-btn" [class.favorited]="file.favorite"
+                                (click)="toggleUploadedFavorite(file)">
+                                ♥
+                            </button>
+
+                        </div>
+
+                        <p class="popular-file-desc">
+                            {{ file.description || 'Không có mô tả.' }}
+                        </p>
+
+                        <div class="popular-file-bottom">
+                            <span>
+                                {{ file.fileName || 'Không xác định' }}
+                                <span *ngIf="file.fileSizeKB"> • {{ file.fileSizeKB }} KB</span>
+                            </span>
+
+                            <button type="button" (click)="readItem(file)">
+                                Đọc tệp
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
 
         </div>
 
     </section>
 
 </div>
+
+<!-- Modal đọc tài liệu ngay tại Home -->
+<section class="home-file-modal" *ngIf="selectedUpload">
+
+    <div class="home-file-backdrop" (click)="closeDetails()"></div>
+
+    <div class="home-file-panel">
+
+        <div class="home-file-header">
+            <div>
+                <h3>{{ selectedUpload.title }}</h3>
+                <p>{{ selectedUpload.description || 'Không có mô tả.' }}</p>
+            </div>
+
+            <button type="button" class="home-file-close" (click)="closeDetails()">
+                ✕
+            </button>
+        </div>
+
+        <div class="home-file-info">
+
+            <div class="detail-row" *ngIf="selectedUpload.fileName">
+                <span>Tên tệp:</span>
+                <strong>{{ selectedUpload.fileName }}</strong>
+            </div>
+
+            <div class="detail-row" *ngIf="selectedUpload.fileExtension">
+                <span>Loại:</span>
+                <strong>{{ selectedUpload.fileExtension.toUpperCase() }}</strong>
+            </div>
+
+            <div class="detail-row" *ngIf="selectedUpload.fileSizeKB">
+                <span>Kích thước:</span>
+                <strong>{{ selectedUpload.fileSizeKB }} KB</strong>
+            </div>
+
+        </div>
+
+        <!-- Đọc PDF trực tiếp -->
+        <div class="pdf-preview" *ngIf="isPdfFile(selectedUpload) && selectedUpload.fileDataUrl">
+
+            <h4>Đọc tài liệu PDF</h4>
+
+            <iframe [src]="getSafeFileUrl(selectedUpload.fileDataUrl)" width="100%" height="650">
+            </iframe>
+        </div>
+
+        <!-- Đọc DOCX dạng text -->
+        <div class="word-preview" *ngIf="isWordFile(selectedUpload) && selectedUpload.previewText">
+
+            <h4>Nội dung tài liệu Word</h4>
+
+            <pre>{{ selectedUpload.previewText }}</pre>
+        </div>
+
+        <!-- DOC cũ -->
+        <div class="no-preview" *ngIf="selectedUpload.fileExtension === 'doc'">
+
+            <p>
+                File DOC cũ không hỗ trợ đọc trực tiếp tốt trên trình duyệt.
+            </p>
+
+            <p>
+                Bạn có thể tải xuống và mở bằng Microsoft Word.
+            </p>
+        </div>
+
+        <!-- Không có dữ liệu đọc -->
+        <div class="no-preview" *ngIf="!selectedUpload.fileDataUrl && !selectedUpload.previewText">
+
+            Không có dữ liệu để đọc trực tiếp. Có thể file quá lớn hoặc chưa được lưu nội dung.
+        </div>
+
+        <!-- Tải xuống -->
+        <div class="download-action" *ngIf="selectedUpload.fileDataUrl">
+            <a [href]="selectedUpload.fileDataUrl" [attr.download]="selectedUpload.fileName" class="download-button">
+                ⬇️ Tải xuống
+            </a>
+        </div>
+
+    </div>
+
+</section>

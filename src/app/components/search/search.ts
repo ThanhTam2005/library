@@ -1,6 +1,8 @@
-import { Component, Input, Injectable } from '@angular/core';
+import { Component, Input, Injectable, OnInit } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DocumentApiService, DocumentItem } from '../../services/document-api.service';
 
 @Injectable({
@@ -11,6 +13,7 @@ export class SearchStateService {
   keyword = '';
 
   documents: any[] = [];
+  uploadedDocuments: any[] = [];
 
   popularFiles = [
     {
@@ -53,6 +56,7 @@ export class SearchStateService {
 
   constructor() {
     this.loadPopularFavorites();
+    this.loadUploadedDocuments();
   }
 
   setDocuments(data: DocumentItem[]) {
@@ -63,6 +67,14 @@ export class SearchStateService {
       icon: this.getIcon(item.type),
       favorite: false
     }));
+  }
+
+  loadUploadedDocuments() {
+    const savedUploads = JSON.parse(localStorage.getItem('uploads') || '[]');
+
+    this.uploadedDocuments = Array.isArray(savedUploads)
+      ? [...savedUploads].reverse()
+      : [];
   }
 
   private loadPopularFavorites() {
@@ -98,7 +110,12 @@ export class SearchStateService {
     if (!favorites.find((item: any) => item.name === file.name)) {
       favorites.unshift({
         ...file,
-        favorite: true
+        title: file.name,
+        fileName: file.name,
+        fileType: file.type,
+        fileExtension: (file.type || '').toLowerCase(),
+        favorite: true,
+        fromSearch: true
       });
 
       this.saveSearchFavoriteFiles(favorites);
@@ -107,7 +124,11 @@ export class SearchStateService {
 
   private removeFromSearchFavorites(file: any) {
     const favorites = this.loadSearchFavoriteFiles();
-    const filtered = favorites.filter((item: any) => item.name !== file.name);
+
+    const filtered = favorites.filter((item: any) => {
+      const itemName = item.name || item.title || item.fileName;
+      return itemName !== file.name;
+    });
 
     this.saveSearchFavoriteFiles(filtered);
   }
@@ -128,19 +149,44 @@ export class SearchStateService {
     this.savePopularFavorites();
   }
 
+  toggleUploadedFavorite(file: any) {
+    const savedUploads = JSON.parse(localStorage.getItem('uploads') || '[]');
+    const uploads = Array.isArray(savedUploads) ? savedUploads : [];
+
+    const target = uploads.find((item: any) => item.uploadedAt === file.uploadedAt);
+
+    if (!target) return;
+
+    target.favorite = !target.favorite;
+    file.favorite = target.favorite;
+
+    localStorage.setItem('uploads', JSON.stringify(uploads));
+    this.loadUploadedDocuments();
+  }
+
   get searchResults() {
     const key = this.keyword.toLowerCase().trim();
 
-    if (!key) {
-      return [];
-    }
+    if (!key) return [];
 
-    return this.documents.filter(item =>
+    const apiResults = this.documents.filter(item =>
       (item.name || '').toLowerCase().includes(key) ||
       (item.type || '').toLowerCase().includes(key) ||
       (item.description || '').toLowerCase().includes(key) ||
       (item.creator || '').toLowerCase().includes(key)
     );
+
+    const uploadedResults = this.uploadedDocuments.filter(item =>
+      (item.title || '').toLowerCase().includes(key) ||
+      (item.fileName || '').toLowerCase().includes(key) ||
+      (item.fileExtension || '').toLowerCase().includes(key) ||
+      (item.description || '').toLowerCase().includes(key)
+    );
+
+    return [
+      ...uploadedResults,
+      ...apiResults
+    ];
   }
 
   getIcon(type: string) {
@@ -151,6 +197,17 @@ export class SearchStateService {
 
     return '📁';
   }
+
+  getUploadedIcon(file: any) {
+    if (file?.isFolder) return '📁';
+
+    const ext = (file?.fileExtension || '').toLowerCase();
+
+    if (ext === 'pdf') return '📕';
+    if (ext === 'doc' || ext === 'docx') return '📄';
+
+    return '📄';
+  }
 }
 
 @Component({
@@ -160,16 +217,22 @@ export class SearchStateService {
   templateUrl: './search.html',
   styleUrls: ['./search.css'],
 })
-export class Search {
+export class Search implements OnInit {
 
   @Input() mode: 'top' | 'main' = 'main';
 
+  selectedUpload: any = null;
+
   constructor(
     public searchState: SearchStateService,
-    private documentApi: DocumentApiService
+    private documentApi: DocumentApiService,
+    private router: Router,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit() {
+    this.searchState.loadUploadedDocuments();
+
     this.documentApi.getDocuments().subscribe({
       next: (data) => {
         this.searchState.setDocuments(data);
@@ -197,6 +260,10 @@ export class Search {
     return this.searchState.popularFiles;
   }
 
+  get uploadedDocuments() {
+    return this.searchState.uploadedDocuments;
+  }
+
   clearSearch() {
     this.searchState.keyword = '';
   }
@@ -205,7 +272,42 @@ export class Search {
     this.searchState.toggleFavorite(file);
   }
 
+  toggleUploadedFavorite(file: any) {
+    this.searchState.toggleUploadedFavorite(file);
+  }
+
+  getUploadedIcon(file: any) {
+    return this.searchState.getUploadedIcon(file);
+  }
+
   readItem(item: any) {
-    alert('Mở: ' + item.name);
+    if (item.uploadedAt) {
+      this.selectedUpload = item;
+      return;
+    }
+
+    alert('Đây là tài liệu mẫu, chưa có file thật để đọc: ' + item.name);
+  }
+
+  closeDetails() {
+    this.selectedUpload = null;
+  }
+
+  isPdfFile(file: any): boolean {
+    return file?.fileExtension === 'pdf' || file?.previewType === 'pdf';
+  }
+
+  isWordFile(file: any): boolean {
+    return file?.fileExtension === 'docx' || file?.fileExtension === 'doc';
+  }
+
+  getSafeFileUrl(fileUrl: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(fileUrl);
+  }
+
+  goToMyFiles() {
+    this.router.navigate(['/my-files'], {
+      queryParams: { section: 'my-files' }
+    });
   }
 }

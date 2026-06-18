@@ -1,115 +1,97 @@
 <div class="upload-page">
   <header class="navbar">
 
-  <div class="navbar-left">
-    <div class="logo">Document Storage</div>
+    <div class="navbar-left">
+      <div class="logo">Document Storage</div>
 
-    <nav class="menu">
+      <nav class="menu">
 
-      <a routerLink="/home">Trang chủ</a>
+        <a routerLink="/home">Trang chủ</a>
 
-      <div class="dropdown">
+        <div class="dropdown">
 
-        <button
-          class="drop-btn"
-          type="button"
-          (click)="toggleStorageMenu()">
+          <button class="drop-btn" type="button" (click)="toggleStorageMenu()">
+            Kho lưu trữ ▾
+          </button>
 
-          Kho lưu trữ ▾
+          <div class="dropdown-menu" [class.show]="showStorageMenu">
 
-        </button>
+            <a routerLink="/my-files" [queryParams]="{ section: 'my-files' }">
+              📁 Tài liệu của tôi
+            </a>
 
-        <div
-          class="dropdown-menu"
-          [class.show]="showStorageMenu">
+            <a routerLink="/my-files" [queryParams]="{ section: 'shared-with-me' }">
+              🤝 Được chia sẻ với tôi
+            </a>
 
-          <a routerLink="/home" [queryParams]="{section:'my-files'}">
-  Tài liệu của tôi
-</a>
+            <a routerLink="/my-files" [queryParams]="{ section: 'recent' }">
+              🕘 Gần đây
+            </a>
 
-<a routerLink="/home" [queryParams]="{section:'shared-with-me'}">
-  Được chia sẻ với tôi
-</a>
+            <a routerLink="/my-files" [queryParams]="{ section: 'starred' }">
+              ⭐ Yêu thích
+            </a>
 
-<a routerLink="/home" [queryParams]="{section:'recent'}">
-  Gần đây
-</a>
+            <a routerLink="/my-files" [queryParams]="{ section: 'trash' }">
+              🗑️ Thùng rác
+            </a>
 
-<a routerLink="/home" [queryParams]="{section:'starred'}">
-  Yêu thích
-</a>
-
-<a routerLink="/home" [queryParams]="{section:'trash'}">
-  Thùng rác
-</a>
+          </div>
 
         </div>
 
-      </div>
+        <a routerLink="/upload">Upload</a>
 
-      <a routerLink="/upload">Upload</a>
-
-    </nav>
-  </div>
-
-  <div class="top-search">
-    <app-search mode="top"></app-search>
-  </div>
-
-  <div class="profile-dropdown">
-
-    <button
-      class="profile-btn"
-      type="button"
-      (click)="toggleProfileMenu()">
-
-      <span class="hamburger-icon">☰</span>
-      <span>Tài khoản cá nhân</span>
-      <span>▾</span>
-
-    </button>
-
-    <div
-      class="profile-menu"
-      [class.show]="showProfileMenu">
-
-      <div class="profile-card">
-
-        <div class="profile-top">
-
-           <div class="avatar large">
-      {{ currentUser.name.charAt(0) }}
+      </nav>
     </div>
 
-    <div class="profile-name-block">
-      <h4>{{ currentUser.name }}</h4>
+    <div class="top-search">
+      <app-search mode="top"></app-search>
     </div>
 
-    <button class="edit-btn">
-      Chỉnh sửa
-    </button>
+    <div class="profile-dropdown">
 
-    <div class="profile-email">
-      {{ currentUser.email }}
-    </div>
+      <button class="profile-btn" type="button" (click)="toggleProfileMenu()">
 
-  </div>
+        <span class="hamburger-icon">☰</span>
+        <span>Tài khoản cá nhân</span>
+        <span>▾</span>
 
-  <div class="profile-sep"></div>
+      </button>
 
-  <div class="profile-actions">
+      <div class="profile-menu" [class.show]="showProfileMenu">
 
-    <button class="activity-log">
-      📜 Nhật kí hoạt động
-    </button>
+        <div class="profile-card">
 
-    <button
-      class="logout"
-      (click)="logout()">
+          <div class="profile-top">
 
-      ⊗ Đăng xuất
+            <div class="avatar large">
+              {{ (currentUser.fullName || 'K').charAt(0) }}
+            </div>
 
-    </button>
+            <div class="profile-name-block">
+              <h4>{{ currentUser.fullName || 'Khách truy cập' }}</h4>
+            </div>
+
+            <div class="profile-email">
+              {{ currentUser.email || 'Chưa có email' }}
+            </div>
+
+          </div>
+
+          <div class="profile-sep"></div>
+
+          <div class="profile-actions">
+
+            <button class="activity-log" type="button" routerLink="/my-files" [queryParams]="{ section: 'activity' }">
+              📜 Nhật kí hoạt động
+            </button>
+
+            <button class="logout" type="button" (click)="logout()">
+              ⊗ Đăng xuất
+            </button>
+
+          </div>
 
         </div>
 
@@ -117,50 +99,78 @@
 
     </div>
 
-  </div>
-
-</header>
+  </header>
 
   <main class="main-content">
+
     <div class="upload-card">
+
       <h2>Upload tài liệu</h2>
-      <p>Nhập thông tin tài liệu và chọn file từ máy tính của bạn.</p>
+
+      <p>
+        Nhập thông tin tài liệu và chọn file PDF, DOC hoặc DOCX từ máy tính của bạn.
+      </p>
 
       <form (ngSubmit)="upload()">
+
         <div class="form-group">
           <label for="title">Tên tài liệu</label>
-          <input id="title" name="title" type="text" [(ngModel)]="uploadData.title" placeholder="Nhập tên tài liệu" required>
+
+          <input id="title" name="title" type="text" [(ngModel)]="uploadData.title" placeholder="Nhập tên tài liệu"
+            required>
         </div>
 
         <div class="form-group">
           <label for="description">Mô tả</label>
-          <textarea id="description" name="description" rows="4" [(ngModel)]="uploadData.description" placeholder="Nhập mô tả ngắn"></textarea>
+
+          <textarea id="description" name="description" rows="4" [(ngModel)]="uploadData.description"
+            placeholder="Nhập mô tả ngắn" required>
+          </textarea>
         </div>
 
         <div class="form-group upload-select-group">
           <label for="file">Chọn tệp hoặc thư mục</label>
 
           <div class="upload-select-controls">
-            <input id="file" type="file" (change)="onFileSelected($event)" multiple>
+
+            <input id="file" type="file"
+              accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              (change)="onFileSelected($event)" multiple>
+
             <button type="button" class="folder-button" (click)="chooseFolder()">
               Chọn thư mục
             </button>
+
           </div>
 
-          <input id="folder" type="file" (change)="onFolderSelected($event)" webkitdirectory directory multiple hidden>
-          <div class="file-info" *ngIf="filePreview">{{ filePreview }}</div>
+          <input id="folder" type="file"
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            (change)="onFolderSelected($event)" webkitdirectory directory multiple hidden>
+
+          <div class="file-info" *ngIf="filePreview">
+            {{ filePreview }}
+          </div>
         </div>
 
-        <button type="submit">Upload</button>
+        <button type="submit">
+          Upload
+        </button>
+
       </form>
 
       <div class="upload-note">
-        <p>Hỗ trợ upload file và thư mục: .doc, .png, thư mục, và nhiều định dạng khác.</p>
+        <p>
+          Hệ thống chỉ hỗ trợ file PDF, DOC và DOCX.
+          File PDF có thể đọc trực tiếp trên web, file DOCX có thể xem nội dung chữ,
+          file DOC có thể tải xuống để mở bằng Microsoft Word.
+        </p>
       </div>
 
       <div class="success-message" *ngIf="uploadMessage">
         {{ uploadMessage }}
       </div>
+
     </div>
+
   </main>
 </div>

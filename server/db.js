@@ -4,7 +4,7 @@ require('dotenv').config();
 const config = {
   connectionString:
     'Driver={ODBC Driver 17 for SQL Server};' +
-    'Server=.\\THANG;' +
+    'Server=THANHTAM;' +
     'Database=document_storage;' +
     'Trusted_Connection=Yes;' +
     'TrustServerCertificate=Yes;' +
